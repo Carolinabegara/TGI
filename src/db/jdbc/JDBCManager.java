@@ -15,6 +15,8 @@ public class JDBCManager implements DBManager{
 	private Connection c;
 
 	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?)";
+	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?)";
+		
 
 	@Override
 	public void connect() {
@@ -108,7 +110,7 @@ public class JDBCManager implements DBManager{
 							+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
 							+ "PlantacionId NOT NULL REFERENCES Plantaciones);");
 			stmt7.close();
-					//Hola
+					
 			Statement stmt8 = c.createStatement();
 			stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
 							+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
@@ -138,7 +140,7 @@ public class JDBCManager implements DBManager{
 	public void addPlantacion(Plantacion plantacion) {
 		
 			try {
-				//No estamos seguras si el 1 es ID o Hectárea ??????
+				//El 1 es de la primera interrogación que tenemos en String addPlantación
 				PreparedStatement prep = c.prepareStatement(addPlantacion);
 				prep.setFloat(1, plantacion.getHectareas());
 				prep.setDate(2, plantacion.getUltimo_regado());
@@ -154,17 +156,13 @@ public class JDBCManager implements DBManager{
 
 	@Override
 	public void addFactura(Factura factura) {
-		/*	private Date fecha;
-	private Float importe;
-	private boolean metodo_de_pago;
-	*/
-		
+			
 		try {
-			//No estamos seguras si el 1 es ID o Hectárea ??????
+			
 			PreparedStatement prep = c.prepareStatement(addFactura);
 			prep.setDate(1, factura.getFecha());
 			prep.setFloat(2, factura.getImporte());
-			prep.setBoolean(3, factura.getMetodo_de_pago));
+			prep.setBoolean(3, factura.getMetodo_de_pago());
 	
 			prep.executeUpdate();
 			prep.close();
