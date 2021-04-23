@@ -50,8 +50,8 @@ public class Factura {
 	public void setImporte(Float importe) {
 		this.importe = importe;
 	}
-
-	public boolean isMetodo_de_pago() {
+	
+	public boolean getMetodo_de_pago() {
 		return metodo_de_pago;
 	}
 

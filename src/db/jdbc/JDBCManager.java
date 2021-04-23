@@ -108,7 +108,7 @@ public class JDBCManager implements DBManager{
 							+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
 							+ "PlantacionId NOT NULL REFERENCES Plantaciones);");
 			stmt7.close();
-					
+					//Hola
 			Statement stmt8 = c.createStatement();
 			stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
 							+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
@@ -139,7 +139,7 @@ public class JDBCManager implements DBManager{
 		
 			try {
 				//No estamos seguras si el 1 es ID o Hectárea ??????
-				PreparedStatement prep = c.prepareStatement(addPlantacion );
+				PreparedStatement prep = c.prepareStatement(addPlantacion);
 				prep.setFloat(1, plantacion.getHectareas());
 				prep.setDate(2, plantacion.getUltimo_regado());
 		
@@ -154,7 +154,24 @@ public class JDBCManager implements DBManager{
 
 	@Override
 	public void addFactura(Factura factura) {
-		// TODO Auto-generated method stub
+		/*	private Date fecha;
+	private Float importe;
+	private boolean metodo_de_pago;
+	*/
+		
+		try {
+			//No estamos seguras si el 1 es ID o Hectárea ??????
+			PreparedStatement prep = c.prepareStatement(addFactura);
+			prep.setDate(1, factura.getFecha());
+			prep.setFloat(2, factura.getImporte());
+			prep.setBoolean(3, factura.getMetodo_de_pago));
+	
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
 		
 	}
 
