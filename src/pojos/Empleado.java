@@ -1,5 +1,4 @@
 package pojos;
-
 import java.sql.Date;
 import java.sql.Blob;
 
@@ -18,7 +17,16 @@ public class Empleado {
 	public Empleado() {
 		super();
 	}
-	
+	public Empleado(String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo) {
+		super();
+		this.nombre = nombre;
+		this.telefono = telefono;
+		this.direccion = direccion;
+		DNI = dNI;
+		this.fecha_Nac = fecha_Nac;
+		this.sueldo = sueldo;
+		
+	}
 	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo,
 			Blob foto) {
 		super();
@@ -31,6 +39,7 @@ public class Empleado {
 		this.sueldo = sueldo;
 		this.foto = foto;
 	}
+	
 	public int getId() {
 		return id;
 	}

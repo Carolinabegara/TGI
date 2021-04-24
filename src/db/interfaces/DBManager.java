@@ -1,5 +1,8 @@
 package db.interfaces;
 
+import java.util.List;
+
+import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
 
@@ -15,4 +18,8 @@ public interface DBManager {
 	public void addPlantacion(Plantacion plantacion);
 
 	public void addFactura(Factura factura);
+	
+	public void addEmpleado(Empleado empleado);
+
+	public List<Empleado> searchEmpleados();
 }

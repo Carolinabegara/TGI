@@ -1,6 +1,8 @@
 package db.jdbc;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 import db.interfaces.DBManager;
 import pojos.Empleado;
@@ -11,12 +13,12 @@ import java.io.IOException;
 
 public class JDBCManager implements DBManager{
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-
 	private Connection c;
 
 	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?)";
 	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?)";
-		
+	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?)";
+	private String searchEmpleados = "SELECT * FROM Empleados";
 
 	@Override
 	public void connect() {
@@ -86,7 +88,7 @@ public class JDBCManager implements DBManager{
 					+ "FacturaId INTEGER NOT NULL REFERENCES Facturas,"
 					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes);");
 			stmt4.close();
-			
+
 			Statement stmt5 = c.createStatement();
 			stmt5.executeUpdate("CREATE TABLE IF NOT EXISTS Animales("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
@@ -95,27 +97,27 @@ public class JDBCManager implements DBManager{
 					+ "Foto BLOB,"
 					+ "Peso TEXT NOT NULL);");
 			stmt5.close();
-					
+
 			Statement stmt6 = c.createStatement();
 			stmt6.executeUpdate( "CREATE TABLE IF NOT EXISTS Plantaciones("
-							+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-							+ "Hectarias REAL NOT NULL,"
-							+ "ProductoId INTEGER NOT NULL REFERENCES Productos,"
-							+ "HoraRegado TEXT NOT NULL);");
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "Hectareas REAL NOT NULL,"
+					+ "ProductoId INTEGER NOT NULL REFERENCES Productos,"
+					+ "HoraRegado TEXT NOT NULL);");
 			stmt6.close();
-			
+
 			Statement stmt7 = c.createStatement();
 			stmt7.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosPlantaciones("
-							+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-							+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
-							+ "PlantacionId NOT NULL REFERENCES Plantaciones);");
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
+					+ "PlantacionId NOT NULL REFERENCES Plantaciones);");
 			stmt7.close();
-					
+
 			Statement stmt8 = c.createStatement();
 			stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
-							+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-							+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
-							+ "AnimalId INTEGER  NOT NULL REFERENCES Animales);");
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
+					+ "AnimalId INTEGER  NOT NULL REFERENCES Animales);");
 			stmt8.close();
 
 		} catch (SQLException e) {
@@ -138,39 +140,94 @@ public class JDBCManager implements DBManager{
 
 	@Override
 	public void addPlantacion(Plantacion plantacion) {
-		
-			try {
-				//El 1 es de la primera interrogación que tenemos en String addPlantación
-				PreparedStatement prep = c.prepareStatement(addPlantacion);
-				prep.setFloat(1, plantacion.getHectareas());
-				prep.setDate(2, plantacion.getUltimo_regado());
-		
-				prep.executeUpdate();
-				prep.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}			
-		
-	}
 
-	@Override
-	public void addFactura(Factura factura) {
-			
 		try {
-			
-			PreparedStatement prep = c.prepareStatement(addFactura);
-			prep.setDate(1, factura.getFecha());
-			prep.setFloat(2, factura.getImporte());
-			prep.setBoolean(3, factura.getMetodo_de_pago());
-	
+			//El 1 es de la primera interrogación que tenemos en String addPlantación
+			PreparedStatement prep = c.prepareStatement(addPlantacion);
+			prep.setFloat(1, plantacion.getHectareas());
+			prep.setDate(2, plantacion.getUltimo_regado());
+
 			prep.executeUpdate();
 			prep.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
-		
+
 	}
+
+	@Override
+	public void addFactura(Factura factura) {
+
+		try {
+
+			PreparedStatement prep = c.prepareStatement(addFactura);
+			prep.setDate(1, factura.getFecha());
+			prep.setFloat(2, factura.getImporte());
+			prep.setBoolean(3, factura.getMetodo_de_pago());
+
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+
+	}
+
+	@Override
+
+	public void addEmpleado (Empleado empleado) {
+
+		try {
+			PreparedStatement prep = c.prepareStatement(addEmpleado);
+			prep.setString(1, empleado.getNombre());
+			prep.setInt(2, empleado.getTelefono());
+			prep.setString(3, empleado.getDireccion());
+			prep.setString(4, empleado.getDNI());
+			prep.setDate(5, empleado.getFecha_Nac());
+			prep.setFloat(6, empleado.getSueldo());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+
+	}
+
+	@Override
+	public List<Empleado> searchEmpleados() {
+		List<Empleado> empleados= new ArrayList<Empleado>();
+
+		/*En este caso el resultado es un ResultSet (que contiene la información que queremos)*/
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery(searchEmpleados);
+
+			while(rs.next()){
+				/*Creamos un objeto empleado rellenando los datos obtenidos en la base de datos para que java lo entienda*/
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date Fecha_Nac = rs.getDate("Fech_Nac");
+				Float sueldo = rs.getFloat("Sueldo");
+				Empleado empleado = new Empleado(nombre, telefono, direccion, DNI, Fecha_Nac, sueldo);
+				//Añadimos un empleado a nuestra lista
+				empleados.add(empleado);
+				LOGGER.fine("Empleado encontrado"+ empleado);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return empleados;
+	}
+
+
 
 }
