@@ -51,7 +51,7 @@ public class JDBCManager implements DBManager{
 					+ "Telefono INTEGER NOT NULL,"
 					+ "Direccion TEXT NOT NULL,"
 					+ "DNI TEXT NOT NULL,"
-					+ "Fech_Nac TEXT NOT NULL,"
+					+ "Fech_Nac DATE NOT NULL,"
 					+ "Sueldo REAL NOT NULL,"
 					+ "Foto BLOB)");
 			stmt.close();
@@ -76,7 +76,7 @@ public class JDBCManager implements DBManager{
 			Statement stmt3 = c.createStatement();
 			stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "Fecha TEXT NOT NULL,"
+					+ "Fecha DATE NOT NULL,"
 					+ "Importe REAL NOT NULL,"
 					+ "MetodoPago TEXT NOT NULL,"
 					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes,"
@@ -93,7 +93,7 @@ public class JDBCManager implements DBManager{
 			stmt5.executeUpdate("CREATE TABLE IF NOT EXISTS Animales("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Especie TEXT NOT NULL,"
-					+ "Fech_Nac TEXT NOT NULL,"
+					+ "Fech_Nac DATE NOT NULL,"
 					+ "Foto BLOB,"
 					+ "Peso TEXT NOT NULL);");
 			stmt5.close();

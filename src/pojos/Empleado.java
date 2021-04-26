@@ -4,20 +4,20 @@ import java.sql.Blob;
 
 public class Empleado {
 	
-	int id;
+	private int id;
 	private String nombre;
 	private int telefono;
 	private String direccion;
 	private String DNI;
 	private Date fecha_Nac;
-	private Float sueldo;
+	private float sueldo;
 	private Blob foto;
 	
 	
 	public Empleado() {
 		super();
 	}
-	public Empleado(String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo) {
+	public Empleado(String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, float sueldo) {
 		super();
 		this.nombre = nombre;
 		this.telefono = telefono;
@@ -27,7 +27,7 @@ public class Empleado {
 		this.sueldo = sueldo;
 		
 	}
-	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo,
+	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, float sueldo,
 			Blob foto) {
 		super();
 		this.id = id;

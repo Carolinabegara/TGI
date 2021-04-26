@@ -16,7 +16,6 @@ import db.jdbc.JDBCManager;
 import logging.MyLogger;
 import pojos.Empleado;
 import pojos.Factura;
-import pojos.Pelicula;
 import pojos.Plantacion;
 
 public class Menu {
@@ -25,20 +24,12 @@ public class Menu {
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	
-	/*private String nombre;
-	private int telefono;
-	private String direccion;
-	private String DNI;
-	private Date fecha_Nac;
-	private Float sueldo;
-	private Blob foto;
-	*/
-	
+		
 	//PRUEBA
 	private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
 	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
 	private final static String[] EMPLEADOS_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
-	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","47460214E","00496776Q","50193218U"};
+	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
 	
@@ -251,16 +242,31 @@ public class Menu {
 				System.out.println(empleado);
 			}
 	}
+	/*private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
+	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
+	private final static String[] EMPLEADOS_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
+	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
+	private final static Date[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
+	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};*/
+	//Empleado(String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo
 	
 	private static void generarEmpleados() {
-	/*	for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
-			
-			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_NOMBRES[i], Date.valueOf(fecha));
-			dbman.addPelicula(pelicula);
+		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
+			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
+			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_TELEFONOS[i], EMPLEADOS_DIRECCIONES[i], EMPLEADOS_DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
+			dbman.addEmpleado(empleado);
 		}
-		System.out.println("Se han generado " + PELICULAS_NOMBRES.length + " peliculas.");
-		mostrarPeliculas();
-		*/
+		System.out.println("Se han generado " + EMPLEADOS_NOMBRES.length + " empleados.");
+		mostrarEmpleados();
+		
+	}
+	
+	private static void mostrarEmpleados() {
+		List<Empleado> empleados = dbman.searchEmpleados();
+		System.out.println("\nSe han encontrado las siguientes películas:");
+		for(Empleado empleado : empleados) {
+			System.out.println(empleado);
+		}
 	}
 	
 	
