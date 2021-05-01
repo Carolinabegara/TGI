@@ -22,4 +22,11 @@ public interface DBManager {
 	public void addEmpleado(Empleado empleado);
 
 	public List<Empleado> searchEmpleados();
+
+
+	public boolean eliminarEmpleado(String nombreEmpleado);
+
+	List<Empleado> searchEmpleadoByNombre(String nombreEmpleado);
+
+	
 }

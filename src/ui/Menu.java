@@ -23,8 +23,8 @@ public class Menu {
 	private static DBManager dbman = new JDBCManager();
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-	
-		
+
+
 	//PRUEBA
 	private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
 	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
@@ -32,11 +32,11 @@ public class Menu {
 	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
-	
-	
-	
-	
-	
+
+
+
+
+
 	public static void main(String[] args) {
 
 		try {
@@ -60,6 +60,8 @@ public class Menu {
 				LOGGER.info("El usuario elije " + opcion);
 			} catch (NumberFormatException | IOException e) {
 				opcion = -1;
+				/*El programa se queda con el último valor válido que se ha introducido previamente
+				  con esta excepción lo solucionamos*/
 				LOGGER.warning("El usuario no ha introducido un número");
 				e.printStackTrace();
 			}
@@ -67,7 +69,7 @@ public class Menu {
 			switch(opcion) {
 
 			case 1:
-				opcion_empleado = 6;
+				opcion_empleado =-1;
 				while (opcion_empleado != 0) {
 					System.out.println("Elije una opción:");
 					System.out.println("1. Consultar");
@@ -108,8 +110,9 @@ public class Menu {
 						}
 						//Opcion de insertar
 						break;
-
-
+					case 3:
+						eliminarEmpleado();
+						break;
 					}
 				} 
 
@@ -166,6 +169,7 @@ public class Menu {
 	}
 
 	private static void addFactura() {
+
 		try {
 			System.out.println("Indique la fecha (yyyy-MM-dd): ");
 			LocalDate fecha = LocalDate.parse(reader.readLine(), formatter);
@@ -179,8 +183,9 @@ public class Menu {
 			boolean metodo_pago = Boolean.parseBoolean(reader.readLine());
 			Factura factura = new Factura (Date.valueOf(fecha),importe, metodo_pago);
 			dbman.addFactura(factura);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (NumberFormatException | IOException e) {
+
+			LOGGER.warning("");
 			e.printStackTrace();
 		}
 
@@ -198,7 +203,7 @@ public class Menu {
 			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
 			dbman.addPlantacion(plantacion);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			//
 			e.printStackTrace();
 		}
 
@@ -235,21 +240,14 @@ public class Menu {
 	}
 
 	private static void searchEmpleado() {
-			List<Empleado> empleados = dbman.searchEmpleados();
-			//Hacemos un bucle para recorrer la lista de empleados
-			System.out.println("Se han encontrado los siguientes empleados");
-			for(Empleado empleado : empleados) {
-				System.out.println(empleado);
-			}
+		List<Empleado> empleados = dbman.searchEmpleados();
+		//Hacemos un bucle para recorrer la lista de empleados
+		System.out.println("Se han encontrado los siguientes empleados");
+		for(Empleado empleado : empleados) {
+			System.out.println(empleado);
+		}
 	}
-	/*private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
-	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
-	private final static String[] EMPLEADOS_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
-	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
-	private final static Date[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
-	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};*/
-	//Empleado(String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, Float sueldo
-	
+
 	private static void generarEmpleados() {
 		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
 			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
@@ -258,18 +256,50 @@ public class Menu {
 		}
 		System.out.println("Se han generado " + EMPLEADOS_NOMBRES.length + " empleados.");
 		mostrarEmpleados();
-		
+
 	}
-	
+
 	private static void mostrarEmpleados() {
 		List<Empleado> empleados = dbman.searchEmpleados();
-		System.out.println("\nSe han encontrado las siguientes películas:");
+		System.out.println("\nSe han encontrado los siguientes empleados:");
 		for(Empleado empleado : empleados) {
 			System.out.println(empleado);
 		}
 	}
-	
-	
+
+	private static void eliminarEmpleado() {
+		mostrarEmpleados();
+		System.out.println("Introduzca nombre del empleado:");
+		try {
+			String nombreEmpleado = reader.readLine();
+			List<Empleado> empleados = dbman.searchEmpleadoByNombre(nombreEmpleado);
+			if (empleados.size() > 0) {
+				System.out.println("Se van a borrar los siguientes empleados:");
+				for(Empleado empleado : empleados) {
+					System.out.println(empleado);
+				}
+				System.out.println("¿Confirmar borrado?(s/n)");
+				String respuesta = reader.readLine();
+				if(respuesta.equalsIgnoreCase("s")) {
+					boolean existeEmpleado = dbman.eliminarEmpleado(nombreEmpleado);
+					if(existeEmpleado) {
+						System.out.println("El empleado se ha borrado con éxito");
+					} else {
+						System.out.println("Ha habido un error al intentar eliminar el empleado");
+					}
+				} else {
+					System.out.println("Se ha cancelado la operación de borrado");
+				}
+			} else {
+				System.out.println("El empleado no existe");
+			}
+		} catch (NumberFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+
 
 }
 

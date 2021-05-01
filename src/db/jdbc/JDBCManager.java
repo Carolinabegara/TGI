@@ -15,10 +15,13 @@ public class JDBCManager implements DBManager{
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private Connection c;
 
-	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?)";
-	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?)";
-	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?)";
-	private String searchEmpleados = "SELECT * FROM Empleados";
+	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?);";
+	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?);";
+	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?);";
+	private final String eliminarUnEmpleado = "DELETE FROM Empleados WHERE Nombre LIKE ?;";
+	private final String searchEmpleados = "SELECT * FROM Empleados;";
+	private final String searchEmpleadoByNombre = "SELECT * FROM Empleados WHERE Nombre = ?;";
+	private final String searchUnEmpleado = "SELECT FROM Empleados WHERE Nombre LIKE ?;";
 
 	@Override
 	public void connect() {
@@ -195,28 +198,35 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
+	
 
 	@Override
 	public List<Empleado> searchEmpleados() {
+		/*Iniciamos nuestro ArrayList que va a contener todos los empleados que vamos a ejecutar en nuestra búsqueda. 
+		Inicialmente va a estar vacía*/
 		List<Empleado> empleados= new ArrayList<Empleado>();
 
 		/*En este caso el resultado es un ResultSet (que contiene la información que queremos)*/
 		try {
 			Statement stmt = c.createStatement();
+			//La Query nos va a devolver el ResultSet va a tener 0 o más elementos con los resultados que ha devuelvo esa query correspondiente.
 			ResultSet rs = stmt.executeQuery(searchEmpleados);
-
+			/*Recorremos el resultSet, es decir, mientras haya elementos nos devuelve un true y 
+			 podemos obtener cada uno de los elementos de las columnas*/
 			while(rs.next()){
 				/*Creamos un objeto empleado rellenando los datos obtenidos en la base de datos para que java lo entienda*/
+				int id = rs.getInt("Id");
 				String nombre = rs.getString("Nombre");
 				int telefono = rs.getInt("Telefono");
 				String direccion = rs.getString("Direccion");
 				String DNI = rs.getString("DNI");
 				Date Fecha_Nac = rs.getDate("Fech_Nac");
 				Float sueldo = rs.getFloat("Sueldo");
-				Empleado empleado = new Empleado(nombre, telefono, direccion, DNI, Fecha_Nac, sueldo);
+				//FALTA AÑADIR LA FOTO
+				Empleado empleado = new Empleado(id, nombre, telefono, direccion, DNI, Fecha_Nac, sueldo);
 				//Añadimos un empleado a nuestra lista
 				empleados.add(empleado);
-				LOGGER.fine("Empleado encontrado"+ empleado);
+				LOGGER.fine("Empleado encontrado: "+ empleado);
 			}
 			rs.close();
 			stmt.close();
@@ -225,9 +235,57 @@ public class JDBCManager implements DBManager{
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
 		}
+		//Vamos a devolver el ArrayList
 		return empleados;
 	}
 
+	@Override
+	public boolean eliminarEmpleado(String nombreEmpleado) {
+		boolean existe = false;
+		try {
+			PreparedStatement prep = c.prepareStatement(eliminarUnEmpleado);
+			prep.setString(1,"%" + nombreEmpleado + "%");
+			int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
+											//y si hace cambios devuelve el numero de filas afectas
+			if(res > 0)
+				existe = true;
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return existe;
+	}
+
+	
+	@Override
+	
+	public List<Empleado> searchEmpleadoByNombre(String nombreEmpleado){
+		List<Empleado> empleados = new ArrayList<Empleado>();
+		try {
+			PreparedStatement prep = c.prepareStatement(searchUnEmpleado);
+			prep.setString(1,"%" + nombreEmpleado + "%");
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date fecha_nac = rs.getDate("Fecha_Nac");
+				float sueldo = rs.getFloat("Sueldo");
+				
+				Empleado empleado = new Empleado (nombre, telefono, direccion, DNI, fecha_nac, sueldo);
+				empleados.add(empleado);
+				LOGGER.fine("Empleado encontrados: " + empleado);
+			}
+			prep.close();
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return empleados;
+	}
+ 
 
 
 }

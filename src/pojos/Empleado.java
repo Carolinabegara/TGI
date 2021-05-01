@@ -27,6 +27,17 @@ public class Empleado {
 		this.sueldo = sueldo;
 		
 	}
+	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, float sueldo) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.telefono = telefono;
+		this.direccion = direccion;
+		DNI = dNI;
+		this.fecha_Nac = fecha_Nac;
+		this.sueldo = sueldo;
+		
+	}
 	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, float sueldo,
 			Blob foto) {
 		super();
