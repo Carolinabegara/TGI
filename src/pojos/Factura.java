@@ -1,5 +1,6 @@
 package pojos;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Factura {
@@ -31,6 +32,19 @@ public class Factura {
 		this.fecha = fecha;
 		this.importe = importe;
 		this.metodo_de_pago = metodo_de_pago;
+	}
+	
+	
+	//PREGUNTAR!! La lista hay que meterla por parámetros o se crea. 
+	public Factura(int id, Date fecha, Float importe, boolean metodo_de_pago, Empleado empleado, Cliente cliente) {
+		super();
+		this.id = id;
+		this.fecha = fecha;
+		this.importe = importe;
+		this.metodo_de_pago = metodo_de_pago;
+		this.empleado = empleado;
+		this.cliente = cliente;
+		this.productos = new ArrayList<>();
 	}
 
 	public int getId() {

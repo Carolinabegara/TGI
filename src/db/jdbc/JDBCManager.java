@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import db.interfaces.DBManager;
+import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
@@ -18,10 +19,14 @@ public class JDBCManager implements DBManager{
 	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?);";
 	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?);";
 	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?);";
+	private final String addCliente = "INSERT INTO Clientes (Nombre, Telefono, Direccion, DNI) VALUES (?,?,?,?);";
 	private final String eliminarUnEmpleado = "DELETE FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchEmpleados = "SELECT * FROM Empleados;";
+	private final String searchClientes = "SELECT * FROM Clientes;";
 	//private final String searchEmpleadoByNombre = "SELECT * FROM Empleados WHERE Nombre = ?;";
 	private final String searchUnEmpleado = "SELECT * FROM Empleados WHERE Nombre LIKE ?;";
+	private final String searchUnEmpleadoId = "SELECT * FROM Empleados WHERE Id = ?;";
+	private final String actualizarNumeroTelefono = "UPDATE Empleados SET Telefono = ?;";
 
 	@Override
 	public void connect() {
@@ -199,6 +204,22 @@ public class JDBCManager implements DBManager{
 
 	}
 	
+	public void addCliente(Cliente cliente) {
+
+		try {
+			PreparedStatement prep = c.prepareStatement(addCliente);
+			prep.setString(1, cliente.getNombre());
+			prep.setInt(2, cliente.getTelefono());
+			prep.setString(3, cliente.getDireccion());
+			prep.setString(4, cliente.getDni());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+
+	}
 
 	@Override
 	public List<Empleado> searchEmpleados() {
@@ -238,7 +259,44 @@ public class JDBCManager implements DBManager{
 		//Vamos a devolver el ArrayList
 		return empleados;
 	}
+	
+	
+	@Override
+	public List<Cliente> searchClientes() {
+		/*Iniciamos nuestro ArrayList que va a contener todos los empleados que vamos a ejecutar en nuestra búsqueda. 
+		Inicialmente va a estar vacía*/
+		List<Cliente> clientes= new ArrayList<Cliente>();
 
+		/*En este caso el resultado es un ResultSet (que contiene la información que queremos)*/
+		try {
+			Statement stmt = c.createStatement();
+			//La Query nos va a devolver el ResultSet va a tener 0 o más elementos con los resultados que ha devuelvo esa query correspondiente.
+			ResultSet rs = stmt.executeQuery(searchClientes);
+			/*Recorremos el resultSet, es decir, mientras haya elementos nos devuelve un true y 
+			 podemos obtener cada uno de los elementos de las columnas*/
+			while(rs.next()){
+				/*Creamos un objeto empleado rellenando los datos obtenidos en la base de datos para que java lo entienda*/
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				//PREGUNTA!!! Tenemos que crear un constructor con las relaciones (factura) relación 1 cliente muchas facturas???
+				Cliente cliente = new Cliente(id, nombre, telefono, direccion, DNI);
+				//Añadimos un cliente a nuestra lista
+				clientes.add(cliente);
+				LOGGER.fine("Cliente encontrado: "+ cliente);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		//Vamos a devolver el ArrayList
+		return clientes;
+	}
 	@Override
 	public boolean eliminarEmpleado(String nombreEmpleado) {
 		boolean existe = false;
@@ -285,7 +343,56 @@ public class JDBCManager implements DBManager{
 		}
 		return empleados;
 	}
- 
-
+	
+	
+	
+	@Override
+	
+	public List<Empleado> searchEmpleadoById(int idEmpleado){
+		List<Empleado> empleados = new ArrayList<Empleado>();
+		try {
+			PreparedStatement prep = c.prepareStatement(searchUnEmpleadoId);
+			prep.setInt(1, idEmpleado);
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date fecha_nac = rs.getDate("Fech_Nac");
+				float sueldo = rs.getFloat("Sueldo");
+				
+				Empleado empleado = new Empleado (id, nombre, telefono, direccion, DNI, fecha_nac, sueldo);
+				empleados.add(empleado);
+				LOGGER.fine("Empleado encontrados: " + empleado);
+			}
+			prep.close();
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return empleados;
+	}
+	
+	
+	@Override
+	public boolean actualizarEmpleado(int idEmpleado) {
+		boolean existe = false;
+		try {
+			PreparedStatement prep = c.prepareStatement(actualizarNumeroTelefono);
+			
+			prep.setInt(1, idEmpleado);
+			int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
+											//y si hace cambios devuelve el numero de filas afectas
+			if(res > 0)
+				existe = true;
+			prep.close();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return existe;
+	}
 
 }

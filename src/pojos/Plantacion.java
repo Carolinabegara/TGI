@@ -8,7 +8,7 @@ public class Plantacion {
 	private float hectareas;
 	
 	private List <Empleado> empleados;
-	private Producto producto;
+	
 	
 	public Plantacion() {
 		super();

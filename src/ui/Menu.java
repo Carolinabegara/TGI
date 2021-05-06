@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 import db.interfaces.DBManager;
 import db.jdbc.JDBCManager;
 import logging.MyLogger;
+import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
@@ -75,7 +76,7 @@ public class Menu {
 					System.out.println("1. Consultar");
 					System.out.println("2. Insertar");
 					System.out.println("3. Borrar");
-					System.out.println("4. Actualizar");
+					System.out.println("4. Actualizar teléfono");
 					System.out.println("5. Comprar");
 					System.out.println("0. Salir");
 
@@ -91,10 +92,20 @@ public class Menu {
 
 					switch(opcion_empleado) {
 					case 1: //Opción consultar
-						searchEmpleado();
-
+						
+						int opcionConsultar = menuConsultar();
+						switch(opcionConsultar){
+						case 1:
+							searchEmpleado();
+							break;
+						case 2:
+							searchCliente();
+							break;
+						
+						}
 						break;
-					case 2:
+						
+					case 2: //Insertar
 						int opcionInsertar = menuInserta();
 						switch(opcionInsertar){
 						case 1:
@@ -110,18 +121,21 @@ public class Menu {
 						}
 						//Opcion de insertar
 						break;
-					case 3:
+					case 3: //Borrar
 						eliminarEmpleado();
+						break;
+					case 4: //Actualizar
+						actualizarTelefono();
 						break;
 					}
 				} 
 
 				break;
-			case 2:
-
-
+			case 2: //Cliente
 				System.out.println("1. Registrarse");
+				//System.out.println("1. ¿Es usted cliente nuestro?");
 				System.out.println("0. Salir");
+
 				try {
 					opcion_cliente = Integer.parseInt(reader.readLine());
 					LOGGER.info("El usuario elije " + opcion_cliente);
@@ -131,22 +145,45 @@ public class Menu {
 					e.printStackTrace();
 				}
 
-				break;
-			case 3:
+				switch(opcion_cliente) {
+				case 1: 
+					addCliente();
 
-				break;
-			case 0:
-				System.out.println("Que tenga un buen día.");
-				break;
-			default:
-				System.out.println("El número introducido no es válido.");
-				break;
+					break;
+				case 2:
+
+					break;
+				case 0:
+					System.out.println("Que tenga un buen día.");
+					break;
+				default:
+					System.out.println("El número introducido no es válido.");
+					break;
+				}
 			}
 		} while (opcion != 0);
 		dbman.disconnect();
 	}
 
+	private static int  menuConsultar() {
+		int opcionConsultar;
+		System.out.println("Consultar:");
+		System.out.println("1. Empleado");
+		System.out.println("2. Cliente");
+	
+		try {
+			opcionConsultar = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcionConsultar);
+		} catch (NumberFormatException | IOException e) {
+			opcionConsultar = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
 
+
+		return opcionConsultar;
+
+	}
 
 	private static int  menuInserta() {
 		int opcionInsertar;
@@ -154,6 +191,7 @@ public class Menu {
 		System.out.println("1. Plantacion");
 		System.out.println("2. Factura");
 		System.out.println("3. Empleado");
+		System.out.println("4. Cliente");
 		try {
 			opcionInsertar = Integer.parseInt(reader.readLine());
 			LOGGER.info("El usuario elije " + opcionInsertar);
@@ -167,7 +205,7 @@ public class Menu {
 		return opcionInsertar;
 
 	}
-
+	//Añadir
 	private static void addFactura() {
 
 		try {
@@ -239,6 +277,29 @@ public class Menu {
 
 	}
 
+	private static void addCliente() {
+		try {
+			System.out.println("Indique el nombre del cliente: ");
+			String nombre = reader.readLine();
+
+			System.out.println("Indique el número de teléfono: ");
+			int telefono = Integer.parseInt(reader.readLine());
+
+			System.out.println("Indique la dirección: ");
+			String direccion = reader.readLine();
+
+			System.out.println("Indique el DNI del cliente: ");
+			String dni = reader.readLine();
+
+			Cliente cliente = new Cliente (nombre, telefono, direccion, dni);
+			dbman.addCliente(cliente);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+
 	private static void generarEmpleados() {
 		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
 			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
@@ -246,20 +307,30 @@ public class Menu {
 			dbman.addEmpleado(empleado);
 		}
 		System.out.println("Se han generado " + EMPLEADOS_NOMBRES.length + " empleados.");
-		mostrarEmpleados();
+		searchEmpleado();
 
 	}
-
-	private static void mostrarEmpleados() {
+	//Búsquedas
+	private static void searchEmpleado() {
 		List<Empleado> empleados = dbman.searchEmpleados();
-		System.out.println("\nSe han encontrado los siguientes empleados:");
+		//Hacemos un bucle para recorrer la lista de empleados
+		System.out.println("Se han encontrado los siguientes empleados");
 		for(Empleado empleado : empleados) {
 			System.out.println(empleado);
 		}
 	}
 
+	private static void searchCliente() {
+		List<Cliente> clientes = dbman.searchClientes();
+		//Hacemos un bucle para recorrer la lista de empleados
+		System.out.println("Se han encontrado los siguientes clientes");
+		for(Cliente cliente : clientes) {
+			System.out.println(cliente);
+		}
+	}
+
 	private static void eliminarEmpleado() {
-		mostrarEmpleados();
+		searchEmpleado();
 		System.out.println("Introduzca nombre del empleado:");
 		try {
 			String nombreEmpleado = reader.readLine();
@@ -289,18 +360,41 @@ public class Menu {
 			e.printStackTrace();
 		}
 	}
-	
-	private static void searchEmpleado() {
-		List<Empleado> empleados = dbman.searchEmpleados();
-		//Hacemos un bucle para recorrer la lista de empleados
-		System.out.println("Se han encontrado los siguientes empleados");
-		for(Empleado empleado : empleados) {
-			System.out.println(empleado);
+
+	private static void actualizarTelefono(){
+		searchEmpleado();
+		System.out.println("Introduzca id del empleado:");
+		try {
+			int idEmpleado = Integer.parseInt(reader.readLine());
+			List<Empleado> empleados = dbman.searchEmpleadoById(idEmpleado);
+			if (empleados.size() > 0) {
+				System.out.println("El empleado que vamos a modificar es: ");
+				for(Empleado empleado : empleados) {
+					System.out.println(empleado);
+				}
+				System.out.println("¿Confirmar la actualización?(s/n)");
+				String respuesta = reader.readLine();
+				if(respuesta.equalsIgnoreCase("s")) {
+					System.out.println("Introduzca el nuevo número de teléfono: ");
+					int nuevoTelefono = Integer.parseInt(reader.readLine());
+					boolean existeEmpleado = dbman.actualizarEmpleado(nuevoTelefono);
+					if(existeEmpleado) {
+						System.out.println("El empleado se ha actualizado con éxito");
+					} else {
+						System.out.println("Ha habido un error al intentar actualizar el empleado");
+					}
+				} else {
+					System.out.println("Se ha cancelado la operación de actualizado");
+				}
+			} else {
+				System.out.println("El empleado no existe");
+			}
+		} catch (NumberFormatException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
-
-
-
+	
 
 }
 

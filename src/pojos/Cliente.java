@@ -17,6 +17,15 @@ public class Cliente {
 		super();
 	}
 	
+	public Cliente(String nombre, int telefono, String direccion, String dni) {
+		super();
+		this.id = id;
+		this.nombre = nombre;
+		this.telefono = telefono;
+		this.direccion = direccion;
+		this.dni = dni;
+	}
+	
 	public Cliente(int id, String nombre, int telefono, String direccion, String dni) {
 		super();
 		this.id = id;
@@ -25,6 +34,8 @@ public class Cliente {
 		this.direccion = direccion;
 		this.dni = dni;
 	}
+	
+
 	public int getId() {
 		return id;
 	}
