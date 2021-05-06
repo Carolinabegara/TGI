@@ -20,8 +20,8 @@ public class JDBCManager implements DBManager{
 	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?);";
 	private final String eliminarUnEmpleado = "DELETE FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchEmpleados = "SELECT * FROM Empleados;";
-	private final String searchEmpleadoByNombre = "SELECT * FROM Empleados WHERE Nombre = ?;";
-	private final String searchUnEmpleado = "SELECT FROM Empleados WHERE Nombre LIKE ?;";
+	//private final String searchEmpleadoByNombre = "SELECT * FROM Empleados WHERE Nombre = ?;";
+	private final String searchUnEmpleado = "SELECT * FROM Empleados WHERE Nombre LIKE ?;";
 
 	@Override
 	public void connect() {
@@ -74,7 +74,7 @@ public class JDBCManager implements DBManager{
 					+ "Cantidad INTEGER NOT NULL,"
 					+ "Precio REAL NOT NULL, "
 					+ "Unidades TEXT NOT NULL,"
-					+ "AnimalId INTEGER NOT NULL REFERENCES Animales);");
+					+ "AnimalId INTEGER NOT NULL REFERENCES Animales ON DELETE CASCADE);");
 			stmt2.close();
 			Statement stmt3 = c.createStatement();
 			stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
@@ -82,14 +82,14 @@ public class JDBCManager implements DBManager{
 					+ "Fecha DATE NOT NULL,"
 					+ "Importe REAL NOT NULL,"
 					+ "MetodoPago TEXT NOT NULL,"
-					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes,"
-					+ "ProductoId INTEGER NOT NULL REFERENCES Productos);");
+					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes ON DELETE CASCADE,"
+					+ "ProductoId INTEGER NOT NULL REFERENCES Productos ON DELETE CASCADE);");
 			stmt3.close();
 			Statement stmt4 = c.createStatement();
 			stmt4.executeUpdate("CREATE TABLE IF NOT EXISTS FacturasProductos("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "FacturaId INTEGER NOT NULL REFERENCES Facturas,"
-					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes);");
+					+ "FacturaId INTEGER NOT NULL REFERENCES Facturas ON DELETE CASCADE,"
+					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes ON DELETE CASCADE);");
 			stmt4.close();
 
 			Statement stmt5 = c.createStatement();
@@ -105,22 +105,22 @@ public class JDBCManager implements DBManager{
 			stmt6.executeUpdate( "CREATE TABLE IF NOT EXISTS Plantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Hectareas REAL NOT NULL,"
-					+ "ProductoId INTEGER NOT NULL REFERENCES Productos,"
+					+ "ProductoId INTEGER NOT NULL REFERENCES Productos ON DELETE CASCADE,"
 					+ "HoraRegado TEXT NOT NULL);");
 			stmt6.close();
 
 			Statement stmt7 = c.createStatement();
 			stmt7.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosPlantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
-					+ "PlantacionId NOT NULL REFERENCES Plantaciones);");
+					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados ON DELETE CASCADE,"
+					+ "PlantacionId NOT NULL REFERENCES Plantaciones ON DELETE CASCADE);");
 			stmt7.close();
 
 			Statement stmt8 = c.createStatement();
 			stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados,"
-					+ "AnimalId INTEGER  NOT NULL REFERENCES Animales);");
+					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados ON DELETE CASCADE,"
+					+ "AnimalId INTEGER  NOT NULL REFERENCES Animales ON DELETE CASCADE);");
 			stmt8.close();
 
 		} catch (SQLException e) {
@@ -271,7 +271,7 @@ public class JDBCManager implements DBManager{
 				int telefono = rs.getInt("Telefono");
 				String direccion = rs.getString("Direccion");
 				String DNI = rs.getString("DNI");
-				Date fecha_nac = rs.getDate("Fecha_Nac");
+				Date fecha_nac = rs.getDate("Fech_Nac");
 				float sueldo = rs.getFloat("Sueldo");
 				
 				Empleado empleado = new Empleado (nombre, telefono, direccion, DNI, fecha_nac, sueldo);

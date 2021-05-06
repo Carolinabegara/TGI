@@ -1,5 +1,6 @@
 package pojos;
 import java.sql.Date;
+import java.util.List;
 
 public class Factura {
 	
@@ -7,6 +8,11 @@ public class Factura {
 	private Date fecha;
 	private Float importe;
 	private boolean metodo_de_pago;
+	
+	
+	private Empleado empleado;
+	private Cliente cliente;
+	private List<Producto> productos;
 	
 	public Factura() {
 		super();

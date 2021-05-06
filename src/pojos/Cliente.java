@@ -1,5 +1,7 @@
 package pojos;
 
+import java.util.List;
+
 public class Cliente {
 	
 	private int id;
@@ -7,6 +9,9 @@ public class Cliente {
 	private int telefono;
 	private String direccion;
 	private String dni;
+	
+	private List<Factura> facturas;
+	
 	
 	public Cliente() {
 		super();

@@ -1,5 +1,6 @@
 package pojos;
 import java.sql.Date;
+import java.util.List;
 import java.sql.Blob;
 
 public class Empleado {
@@ -13,6 +14,9 @@ public class Empleado {
 	private float sueldo;
 	private Blob foto;
 	
+	private List<Plantacion> plantaciones;
+	private List<Animal> animales;
+	private List <Factura> facturas;
 	
 	public Empleado() {
 		super();

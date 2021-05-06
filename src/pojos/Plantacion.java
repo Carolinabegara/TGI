@@ -1,10 +1,14 @@
 package pojos;
 import java.sql.Date;
+import java.util.List;
 public class Plantacion {
 	
 	private int id;
 	private Date ultimo_regado;
 	private float hectareas;
+	
+	private List <Empleado> empleados;
+	private Producto producto;
 	
 	public Plantacion() {
 		super();

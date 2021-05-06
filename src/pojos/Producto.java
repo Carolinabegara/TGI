@@ -1,5 +1,7 @@
 package pojos;
 
+import java.util.List;
+
 public class Producto {
 	
 	private int id;
@@ -8,6 +10,10 @@ public class Producto {
 	private String tipo;
 	private String unidades;
 	private float precio;
+	
+	private List<Factura> facturas;
+	private Animal animal;
+	private Plantacion plantacion;
 	
 	public Producto() {
 		super();

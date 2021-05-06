@@ -1,6 +1,7 @@
 package pojos;
 
 import java.sql.Date;
+import java.util.List;
 import java.sql.Blob;
 
 public class Animal {
@@ -9,6 +10,9 @@ public class Animal {
 	private String especie;
 	private Date fecha_Nac;
 	private Blob foto;
+	
+	private List<Empleado> empleados;
+	private List<Producto> productos;
 	
 	public Animal() {
 		super();

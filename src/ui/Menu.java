@@ -90,7 +90,7 @@ public class Menu {
 
 
 					switch(opcion_empleado) {
-					case 1: 
+					case 1: //Opción consultar
 						searchEmpleado();
 
 						break;
@@ -239,15 +239,6 @@ public class Menu {
 
 	}
 
-	private static void searchEmpleado() {
-		List<Empleado> empleados = dbman.searchEmpleados();
-		//Hacemos un bucle para recorrer la lista de empleados
-		System.out.println("Se han encontrado los siguientes empleados");
-		for(Empleado empleado : empleados) {
-			System.out.println(empleado);
-		}
-	}
-
 	private static void generarEmpleados() {
 		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
 			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
@@ -298,6 +289,16 @@ public class Menu {
 			e.printStackTrace();
 		}
 	}
+	
+	private static void searchEmpleado() {
+		List<Empleado> empleados = dbman.searchEmpleados();
+		//Hacemos un bucle para recorrer la lista de empleados
+		System.out.println("Se han encontrado los siguientes empleados");
+		for(Empleado empleado : empleados) {
+			System.out.println(empleado);
+		}
+	}
+
 
 
 
