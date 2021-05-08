@@ -27,7 +27,10 @@ public class JDBCManager implements DBManager{
 	private final String searchUnEmpleado = "SELECT * FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchUnEmpleadoId = "SELECT * FROM Empleados WHERE Id = ?;";
 	private final String actualizarNumeroTelefono = "UPDATE Empleados SET Telefono = ?;";
-
+	private final String insertarImagen = "UPDATE Empleados SET Foto = ? WHERE Id = ?;";
+	
+	
+	
 	@Override
 	public void connect() {
 		try {
@@ -203,7 +206,7 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
-	
+	@Override
 	public void addCliente(Cliente cliente) {
 
 		try {
@@ -220,7 +223,21 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
+	
+	public void addImagen(Empleado empleado) {
+		try {
+			PreparedStatement prep = c.prepareStatement(insertarImagen);
+			prep.setBytes(1, empleado.getFoto());
+			prep.setInt(2, empleado.getId());
+			int resultado = prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+			
 
+	}
 	@Override
 	public List<Empleado> searchEmpleados() {
 		/*Iniciamos nuestro ArrayList que va a contener todos los empleados que vamos a ejecutar en nuestra búsqueda. 
@@ -243,8 +260,9 @@ public class JDBCManager implements DBManager{
 				String DNI = rs.getString("DNI");
 				Date Fecha_Nac = rs.getDate("Fech_Nac");
 				Float sueldo = rs.getFloat("Sueldo");
+				byte[] foto = rs.getBytes("Foto");
 				//FALTA AÑADIR LA FOTO
-				Empleado empleado = new Empleado(id, nombre, telefono, direccion, DNI, Fecha_Nac, sueldo);
+				Empleado empleado = new Empleado(id, nombre, telefono, direccion, DNI, Fecha_Nac, sueldo, foto);
 				//Añadimos un empleado a nuestra lista
 				empleados.add(empleado);
 				LOGGER.fine("Empleado encontrado: "+ empleado);
@@ -393,6 +411,12 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}
 		return existe;
+	}
+
+	@Override
+	public void addCliente(Empleado empleado) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

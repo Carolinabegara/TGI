@@ -2,6 +2,10 @@
 package ui;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.sql.Blob;
@@ -69,7 +73,7 @@ public class Menu {
 
 			switch(opcion) {
 
-			case 1:
+			case 1://EMPLEADO
 				opcion_empleado =-1;
 				while (opcion_empleado != 0) {
 					System.out.println("Elije una opción:");
@@ -94,9 +98,10 @@ public class Menu {
 					case 1: //Opción consultar
 						
 						int opcionConsultar = menuConsultar();
+						
 						switch(opcionConsultar){
 						case 1:
-							searchEmpleado();
+							mostrarEmpleados();
 							break;
 						case 2:
 							searchCliente();
@@ -105,8 +110,9 @@ public class Menu {
 						}
 						break;
 						
-					case 2: //Insertar
+					case 2: //Opción Insertar
 						int opcionInsertar = menuInserta();
+						
 						switch(opcionInsertar){
 						case 1:
 							addPlantacion();
@@ -116,11 +122,19 @@ public class Menu {
 							break;
 						case 3:
 							addEmpleado();
-
+							break;
+						case 4:
+							addCliente();
+							break;
+						case 5:
+							addImagen();
+							break;
+						case 0:
 							break;
 						}
 						//Opcion de insertar
 						break;
+						
 					case 3: //Borrar
 						eliminarEmpleado();
 						break;
@@ -148,10 +162,6 @@ public class Menu {
 				switch(opcion_cliente) {
 				case 1: 
 					addCliente();
-
-					break;
-				case 2:
-
 					break;
 				case 0:
 					System.out.println("Que tenga un buen día.");
@@ -164,6 +174,8 @@ public class Menu {
 		} while (opcion != 0);
 		dbman.disconnect();
 	}
+
+
 
 	private static int  menuConsultar() {
 		int opcionConsultar;
@@ -192,6 +204,8 @@ public class Menu {
 		System.out.println("2. Factura");
 		System.out.println("3. Empleado");
 		System.out.println("4. Cliente");
+		System.out.println("5. Insertar imagen");
+		System.out.println("0. Salir");
 		try {
 			opcionInsertar = Integer.parseInt(reader.readLine());
 			LOGGER.info("El usuario elije " + opcionInsertar);
@@ -299,7 +313,26 @@ public class Menu {
 		}
 
 	}
-
+	private static void addImagen() {
+		try {
+			System.out.println("Indique el id del empleado");
+			mostrarEmpleados();
+			int idEmpleado = Integer.parseInt(reader.readLine());
+			System.out.println("Indique la foto que desea agregar:");
+			String imagenNombre = reader.readLine();
+			Empleado empleado = new Empleado ();
+			empleado.setId(idEmpleado);
+			empleado.setFoto(readFile(imagenNombre));
+			dbman.addImagen(empleado);
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 	private static void generarEmpleados() {
 		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
 			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
@@ -307,11 +340,11 @@ public class Menu {
 			dbman.addEmpleado(empleado);
 		}
 		System.out.println("Se han generado " + EMPLEADOS_NOMBRES.length + " empleados.");
-		searchEmpleado();
+		mostrarEmpleados();
 
 	}
 	//Búsquedas
-	private static void searchEmpleado() {
+	private static void mostrarEmpleados() {
 		List<Empleado> empleados = dbman.searchEmpleados();
 		//Hacemos un bucle para recorrer la lista de empleados
 		System.out.println("Se han encontrado los siguientes empleados");
@@ -330,7 +363,7 @@ public class Menu {
 	}
 
 	private static void eliminarEmpleado() {
-		searchEmpleado();
+		mostrarEmpleados();
 		System.out.println("Introduzca nombre del empleado:");
 		try {
 			String nombreEmpleado = reader.readLine();
@@ -362,7 +395,7 @@ public class Menu {
 	}
 
 	private static void actualizarTelefono(){
-		searchEmpleado();
+		mostrarEmpleados();
 		System.out.println("Introduzca id del empleado:");
 		try {
 			int idEmpleado = Integer.parseInt(reader.readLine());
@@ -395,7 +428,27 @@ public class Menu {
 		}
 	}
 	
-
+	/*
+	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
+	 */
+	private static byte[] readFile(String file) {
+		file = "img\\" + file;
+        ByteArrayOutputStream bos = null;
+        try {
+            File f = new File(file);
+            FileInputStream fis = new FileInputStream(f);
+            byte[] buffer = new byte[1024];
+            bos = new ByteArrayOutputStream();
+            for (int len; (len = fis.read(buffer)) != -1;) {
+                bos.write(buffer, 0, len);
+            }
+        } catch (FileNotFoundException e) {
+            System.err.println(e.getMessage());
+        } catch (IOException e2) {
+            System.err.println(e2.getMessage());
+        }
+        return bos != null ? bos.toByteArray() : null;
+    }
 }
 
 

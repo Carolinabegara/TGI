@@ -9,7 +9,7 @@ public class Animal {
 	private int id;
 	private String especie;
 	private Date fecha_Nac;
-	private Blob foto;
+	private byte[] foto;
 	
 	private List<Empleado> empleados;
 	private List<Producto> productos;
@@ -18,7 +18,7 @@ public class Animal {
 		super();
 	}
 	
-	public Animal(int id, String especie, Date fecha_Nac, Blob foto) {
+	public Animal(int id, String especie, Date fecha_Nac, byte[] foto) {
 		super();
 		this.id = id;
 		this.especie = especie;
@@ -43,10 +43,10 @@ public class Animal {
 	public void setFecha_Nac(Date fecha_Nac) {
 		this.fecha_Nac = fecha_Nac;
 	}
-	public Blob getFoto() {
+	public byte[] getFoto() {
 		return foto;
 	}
-	public void setFoto(Blob foto) {
+	public void setFoto(byte[] foto) {
 		this.foto = foto;
 	}
 	

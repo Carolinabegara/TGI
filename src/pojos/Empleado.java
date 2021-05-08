@@ -12,7 +12,8 @@ public class Empleado {
 	private String DNI;
 	private Date fecha_Nac;
 	private float sueldo;
-	private Blob foto;
+	//Ponemos byte[] en vez de BLOB porque SQLITE no nos permite trabajar con BLOB
+	private byte[] foto;
 	
 	private List<Plantacion> plantaciones;
 	private List<Animal> animales;
@@ -43,7 +44,7 @@ public class Empleado {
 		
 	}
 	public Empleado(int id, String nombre, int telefono, String direccion, String dNI, Date fecha_Nac, float sueldo,
-			Blob foto) {
+			byte[] foto) {
 		super();
 		this.id = id;
 		this.nombre = nombre;
@@ -97,10 +98,10 @@ public class Empleado {
 	public void setSueldo(Float sueldo) {
 		this.sueldo = sueldo;
 	}
-	public Blob getFoto() {
+	public byte[] getFoto() {
 		return foto;
 	}
-	public void setFoto(Blob foto) {
+	public void setFoto(byte[] foto) {
 		this.foto = foto;
 	}
 
