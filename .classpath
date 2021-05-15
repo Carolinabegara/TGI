@@ -7,5 +7,7 @@
 		</attributes>
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.34.0.jar"/>
+	<classpathentry kind="lib" path="lib/eclipselink.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.persistence-api-2.2.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

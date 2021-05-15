@@ -70,9 +70,9 @@ public class JDBCManager implements DBManager{
 			stmt1.executeUpdate("CREATE TABLE IF NOT EXISTS Clientes("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Nombre TEXT NOT NULL,"
-					+ "Telefono INTEGER NOT NULL,"
-					+ "Direccion TEXT NOT NULL,"
-					+ "DNI TEXT NOT NULL)");
+					+ "Telefono INTEGER,"
+					+ "Direccion TEXT,"
+					+ "DNI TEXT)");
 			stmt1.close();
 			Statement stmt2 = c.createStatement();
 			stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("

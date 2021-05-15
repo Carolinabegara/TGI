@@ -8,6 +8,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Date;
 import java.time.LocalDate;
@@ -16,16 +18,21 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import db.interfaces.DBManager;
+import db.interfaces.UsuariosManager;
 import db.jdbc.JDBCManager;
+import db.jpa.JPAUsuariosManager;
 import logging.MyLogger;
 import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
+import pojos.Rol;
+import pojos.Usuario;
 
 public class Menu {
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private static DBManager dbman = new JDBCManager();
+	private static UsuariosManager userman = new JPAUsuariosManager();
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -50,129 +57,98 @@ public class Menu {
 			e.printStackTrace();
 		}
 		dbman.connect();
+		userman.connect();
 		int opcion;
-		int opcion_empleado;
-		int opcion_cliente;
-
+		System.out.println("\n¡Bienvenido a la Granja Paraíso!");
 		do {
-			System.out.println("Elije una opción:");
-			System.out.println("1. Empleado");
-			System.out.println("2. Cliente");
+			System.out.println("\nElige una opción:");
+			System.out.println("1. Iniciar sesión");
+			System.out.println("2. ¿Eres nuevo en nuestra granja? Crea una cuenta");
 			System.out.println("0. Salir");
-
 			try {
 				opcion = Integer.parseInt(reader.readLine());
-				LOGGER.info("El usuario elije " + opcion);
+				LOGGER.info("El usuario elige " + opcion);
 			} catch (NumberFormatException | IOException e) {
 				opcion = -1;
-				/*El programa se queda con el último valor válido que se ha introducido previamente
-				  con esta excepción lo solucionamos*/
 				LOGGER.warning("El usuario no ha introducido un número");
 				e.printStackTrace();
 			}
-
 			switch(opcion) {
-
-			case 1://EMPLEADO
-				opcion_empleado =-1;
-				while (opcion_empleado != 0) {
-					System.out.println("Elije una opción:");
-					System.out.println("1. Consultar");
-					System.out.println("2. Insertar");
-					System.out.println("3. Borrar");
-					System.out.println("4. Actualizar teléfono");
-					System.out.println("5. Comprar");
-					System.out.println("0. Salir");
-
-					try {
-						opcion_empleado = Integer.parseInt(reader.readLine());
-						LOGGER.info("El usuario elije " + opcion_empleado);
-					} catch (NumberFormatException | IOException e) {
-						opcion_empleado = -1;
-						LOGGER.warning("El usuario no ha introducido un número");
-						e.printStackTrace();
-					}
-
-
-					switch(opcion_empleado) {
-					case 1: //Opción consultar
-						
-						int opcionConsultar = menuConsultar();
-						
-						switch(opcionConsultar){
-						case 1:
-							mostrarEmpleados();
-							break;
-						case 2:
-							searchCliente();
-							break;
-						
-						}
-						break;
-						
-					case 2: //Opción Insertar
-						int opcionInsertar = menuInserta();
-						
-						switch(opcionInsertar){
-						case 1:
-							addPlantacion();
-							break;
-						case 2:
-							addFactura();
-							break;
-						case 3:
-							addEmpleado();
-							break;
-						case 4:
-							addCliente();
-							break;
-						case 5:
-							addImagen();
-							break;
-						case 0:
-							break;
-						}
-						//Opcion de insertar
-						break;
-						
-					case 3: //Borrar
-						eliminarEmpleado();
-						break;
-					case 4: //Actualizar
-						actualizarTelefono();
-						break;
-					}
-				} 
-
+			case 1:
+				iniciarSesion();
 				break;
-			case 2: //Cliente
-				System.out.println("1. Registrarse");
-				//System.out.println("1. ¿Es usted cliente nuestro?");
-				System.out.println("0. Salir");
-
-				try {
-					opcion_cliente = Integer.parseInt(reader.readLine());
-					LOGGER.info("El usuario elije " + opcion_cliente);
-				} catch (NumberFormatException | IOException e) {
-					opcion_cliente = -1;
-					LOGGER.warning("El usuario no ha introducido un número");
-					e.printStackTrace();
-				}
-
-				switch(opcion_cliente) {
-				case 1: 
-					addCliente();
-					break;
-				case 0:
-					System.out.println("Que tenga un buen día.");
-					break;
-				default:
-					System.out.println("El número introducido no es válido.");
-					break;
-				}
+			case 2:
+				crearCuenta();
+				break;
+			case 0:
+				break;
 			}
 		} while (opcion != 0);
+
+		userman.disconnect();
 		dbman.disconnect();
+	}
+	private static void crearCuenta() {
+		try {
+			System.out.println("E-mail:");
+			String email = reader.readLine();
+			System.out.println("Contraseña:");
+			//No queremos guardar nuestra contraña en claro en nuestra base de datos
+			String pass = reader.readLine();
+			MessageDigest md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
+			md.update(pass.getBytes());
+			byte[] hash = md.digest();//Convertimos la contraseña en un array de bytes
+			System.out.println("Nombre:");
+			String nombre = reader.readLine();
+			System.out.println(userman.getRoles());//Aquí le mostramos los roles al usuario
+			System.out.println("Id del rol:");
+			int rolId = Integer.parseInt(reader.readLine());
+			Rol rol = userman.getRolById(rolId);
+			Usuario usuario = new Usuario(email, hash, rol);
+			LOGGER.info(usuario.toString());
+
+			userman.addUsuario(usuario); //Persistimos el objeto en la base de datos
+			System.out.println("Te has registrado con éxito");
+			LOGGER.info(usuario.toString());
+			Cliente cliente = new Cliente (usuario.getId(), nombre);
+			dbman.addCliente(cliente);
+
+		} catch (IOException e) {
+			LOGGER.warning("Error al registrarse");
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
+	private static void iniciarSesion() {
+
+		try {
+			System.out.println("Indique su email");
+			String email = reader.readLine();
+			System.out.println("Indique su contraseña");
+			String password = reader.readLine();
+			//Comprobamos la contraseña
+			Usuario usuario = userman.verifyPassword(email , password);
+			if(usuario == null) {
+				System.out.println("Email o contraseña incorrectos");
+			}else {
+				//IgnoreCase ignora entre mayúsculas y minusculas
+				if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
+					menuEmpleado();
+				}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
+					menuCliente();
+				}
+			}
+
+		} catch (IOException e) {
+
+			e.printStackTrace();
+		}
+
+
+
 	}
 
 
@@ -182,7 +158,7 @@ public class Menu {
 		System.out.println("Consultar:");
 		System.out.println("1. Empleado");
 		System.out.println("2. Cliente");
-	
+
 		try {
 			opcionConsultar = Integer.parseInt(reader.readLine());
 			LOGGER.info("El usuario elije " + opcionConsultar);
@@ -219,6 +195,108 @@ public class Menu {
 		return opcionInsertar;
 
 	}
+
+	public static void menuEmpleado() {
+		int opcion_empleado=-1;
+		System.out.println("Menú empleado");
+		System.out.println("Elije una opción:");
+		System.out.println("1. Consultar");
+		System.out.println("2. Insertar");
+		System.out.println("3. Borrar");
+		System.out.println("4. Actualizar teléfono");
+		System.out.println("5. Comprar");
+		System.out.println("0. Salir");
+
+		try {
+			opcion_empleado = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcion_empleado);
+		} catch (NumberFormatException | IOException e) {
+			opcion_empleado = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
+
+
+		switch(opcion_empleado) {
+		case 1: //Opción consultar
+
+			int opcionConsultar = menuConsultar();
+
+			switch(opcionConsultar){
+			case 1:
+				mostrarEmpleados();
+				break;
+			case 2:
+				searchCliente();
+				break;
+
+			}
+			break;
+
+		case 2: //Opción Insertar
+			int opcionInsertar = menuInserta();
+
+			switch(opcionInsertar){
+			case 1:
+				addPlantacion();
+				break;
+			case 2:
+				addFactura();
+				break;
+			case 3:
+				addEmpleado();
+				break;
+			case 4:
+				addCliente();
+				break;
+			case 5:
+				addImagen();
+				break;
+			case 0:
+				break;
+			}
+			//Opcion de insertar
+			break;
+
+		case 3: //Borrar
+			eliminarEmpleado();
+			break;
+		case 4: //Actualizar
+			actualizarTelefono();
+			break;
+		}
+	}
+
+	private static void menuCliente() {
+		/*TENEMOS QUE MIRAR ESTO. EL CLIENTE EN NUESTRA APLICACIÓN YA SE HA REGISTRADO.*/
+		int opcion_cliente = -1;
+		System.out.println("1. Registrarse");
+		//System.out.println("1. ¿Es usted cliente nuestro?");
+		System.out.println("0. Salir");
+
+		try {
+			opcion_cliente = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcion_cliente);
+		} catch (NumberFormatException | IOException e) {
+			opcion_cliente = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
+
+		switch(opcion_cliente) {
+		case 1: 
+			addCliente();
+			break;
+		case 0:
+			System.out.println("Que tenga un buen día.");
+			break;
+		default:
+			System.out.println("El número introducido no es válido.");
+			break;
+		}
+	}
+
+
 	//Añadir
 	private static void addFactura() {
 
@@ -331,7 +409,7 @@ public class Menu {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
 	private static void generarEmpleados() {
 		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
@@ -427,28 +505,28 @@ public class Menu {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
 	 */
 	private static byte[] readFile(String file) {
 		file = "img\\" + file;
-        ByteArrayOutputStream bos = null;
-        try {
-            File f = new File(file);
-            FileInputStream fis = new FileInputStream(f);
-            byte[] buffer = new byte[1024];
-            bos = new ByteArrayOutputStream();
-            for (int len; (len = fis.read(buffer)) != -1;) {
-                bos.write(buffer, 0, len);
-            }
-        } catch (FileNotFoundException e) {
-            System.err.println(e.getMessage());
-        } catch (IOException e2) {
-            System.err.println(e2.getMessage());
-        }
-        return bos != null ? bos.toByteArray() : null;
-    }
+		ByteArrayOutputStream bos = null;
+		try {
+			File f = new File(file);
+			FileInputStream fis = new FileInputStream(f);
+			byte[] buffer = new byte[1024];
+			bos = new ByteArrayOutputStream();
+			for (int len; (len = fis.read(buffer)) != -1;) {
+				bos.write(buffer, 0, len);
+			}
+		} catch (FileNotFoundException e) {
+			System.err.println(e.getMessage());
+		} catch (IOException e2) {
+			System.err.println(e2.getMessage());
+		}
+		return bos != null ? bos.toByteArray() : null;
+	}
 }
 
 
