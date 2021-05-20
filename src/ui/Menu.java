@@ -122,7 +122,7 @@ public class Menu {
 		}
 
 	}
-	
+
 
 	private static void iniciarSesion() {
 		try {
@@ -132,7 +132,7 @@ public class Menu {
 			String password = reader.readLine();
 			//Comprobamos la contraseña
 			Usuario usuario = userman.verifyPassword(email , password);
-			
+
 			if(usuario == null) {
 				System.out.println("Email o contraseña incorrectos");
 			}else {
@@ -141,15 +141,15 @@ public class Menu {
 					menuEmpleado();
 
 				}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
-				//menuCliente();
+					//menuCliente();
 				}
 			}
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
-		
+
 		}
-		
+
 	}
 
 
@@ -162,7 +162,7 @@ public class Menu {
 			String password = reader.readLine();
 			//Comprobamos la contraseña
 			Usuario usuario = userman.verifyPassword(email , password);
-			
+
 			if(usuario == null) {
 				System.out.println("Email o contraseña incorrectos");
 			}else {
@@ -171,6 +171,28 @@ public class Menu {
 				//Comprobamos la contraseña
 				userman.updatePassword(usuario,new_password);	
 				System.out.println("contraseña actualizada");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void borrarUsuario() {
+
+		try {
+			System.out.println("Indique su email");
+			String email = reader.readLine();
+			System.out.println("Indique su contraseña");
+			String password = reader.readLine();
+			//Comprobamos la contraseña
+			Usuario usuario = userman.verifyPassword(email , password);
+
+			if(usuario == null) {
+				System.out.println("Email o contraseña incorrectos");
+			}else {
+				System.out.println("Procedemos a borrar el usuario");
+				userman.deleteUser(usuario);	
+				System.out.println("Usuario borrado");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -210,10 +232,7 @@ public class Menu {
 			LOGGER.warning("El usuario no ha introducido un número");
 			e.printStackTrace();
 		}
-
-
 		return opcionInsertar;
-
 	}
 
 	public static void menuEmpleado() {
@@ -274,7 +293,31 @@ public class Menu {
 				break;
 
 			case 3: //Borrar
-				eliminarEmpleado();
+				int borrar =-1;
+				System.out.println("1. Borrar empleado");
+				System.out.println("2. Borrar usuario");
+				System.out.println("0. Salir");
+				try {
+					borrar = Integer.parseInt(reader.readLine());
+					LOGGER.info("El usuario elige " + borrar);
+				} catch (NumberFormatException | IOException e) {
+					borrar = -1;
+					LOGGER.warning("El usuario no ha introducido un número");
+					e.printStackTrace();
+				}
+				switch(borrar) {
+				case 1:
+					eliminarEmpleado();
+					break;
+				case 2:
+					borrarUsuario();
+					//Ponemos opcion_empleado = 0 porque cuando borras un usuario ya no puede hacer nada.
+					opcion_empleado =0;
+					break;
+				case 0:
+					break;
+				}
+
 				break;
 			case 4: //Actualizar
 				actualizarTelefono();
@@ -285,7 +328,7 @@ public class Menu {
 			}
 		}
 	}
-	
+
 	//Añadir
 	private static void addFactura() {
 

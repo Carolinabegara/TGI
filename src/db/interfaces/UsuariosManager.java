@@ -14,4 +14,5 @@ public interface UsuariosManager {
 	void addRol(Rol rol);
 	Usuario verifyPassword(String email, String password);
 	void updatePassword(Usuario usuario, String password);
+	void deleteUser(Usuario usuario);
 }

@@ -110,15 +110,6 @@ private static BufferedReader reader = new BufferedReader(new InputStreamReader(
 	public void updatePassword(Usuario usuario, String new_password) {
 		try {
 			
-			/*//Con estas tres líneas construimos el hash
-			MessageDigest md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
-			md.update(password.getBytes());
-			byte[] hash = md.digest();//Convertimos la contraseña en un array de bytes
-			Query q = em.createNativeQuery("SELECT * FROM Usuarios WHERE email = ? AND password = ?", Usuario.class);//Junto con la query especificamos que tipo de objeto nos va a devolver el createNativeQuery
-			q.setParameter(1,email);
-			q.setParameter(2,hash);
-			Usuario usuario = (Usuario) q.getSingleResult();*/
-			
 			em.getTransaction().begin();
 			MessageDigest nuevo_md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
 			nuevo_md.update(new_password.getBytes());
@@ -131,5 +122,14 @@ private static BufferedReader reader = new BufferedReader(new InputStreamReader(
 		
 	}
 	
+	@Override
+	public void deleteUser(Usuario usuario) {
+	
+			em.getTransaction().begin();
+			em.remove(usuario);
+			em.getTransaction().commit();
+		
+		
+	}
 }
 
