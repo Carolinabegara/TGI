@@ -11,16 +11,22 @@ import db.interfaces.UsuariosManager;
 import pojos.Rol;
 import pojos.Usuario;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.util.List;
 import java.util.logging.Logger;
 
-
 public class JPAUsuariosManager implements UsuariosManager {
+
+private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private EntityManagerFactory factory;
+	//Ponemos aquí fuera private EntityManager em para poder usarlo en todos los métodos. 
 	private EntityManager em;
 	private final String PERSISTENCE_PROVIDER = "granja-provider";
 
@@ -45,6 +51,7 @@ public class JPAUsuariosManager implements UsuariosManager {
 		addRol(rol2);
 
 	}
+	
 	@Override
 	public void addRol(Rol rol) {
 		em.getTransaction().begin();//Sirve para añadir los nuevos roles a la base de datos.
@@ -82,7 +89,6 @@ public class JPAUsuariosManager implements UsuariosManager {
 
 	}
 
-
 	@Override
 	public Usuario verifyPassword(String email, String password) {
 		try {
@@ -99,7 +105,31 @@ public class JPAUsuariosManager implements UsuariosManager {
 			return null;
 		}
 		
-		
+	}
+	@Override
+	public void updatePassword(Usuario usuario, String new_password) {
+		try {
+			
+			/*//Con estas tres líneas construimos el hash
+			MessageDigest md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
+			md.update(password.getBytes());
+			byte[] hash = md.digest();//Convertimos la contraseña en un array de bytes
+			Query q = em.createNativeQuery("SELECT * FROM Usuarios WHERE email = ? AND password = ?", Usuario.class);//Junto con la query especificamos que tipo de objeto nos va a devolver el createNativeQuery
+			q.setParameter(1,email);
+			q.setParameter(2,hash);
+			Usuario usuario = (Usuario) q.getSingleResult();*/
+			
+			em.getTransaction().begin();
+			MessageDigest nuevo_md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
+			nuevo_md.update(new_password.getBytes());
+			byte[] nuevo_hash = nuevo_md.digest();
+			usuario.setPassword(nuevo_hash);
+			em.getTransaction().commit();
+		}catch(NoSuchAlgorithmException| NoResultException e) {
+			e.printStackTrace();
+		}
 		
 	}
+	
 }
+

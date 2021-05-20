@@ -45,10 +45,6 @@ public class Menu {
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
 
-
-
-
-
 	public static void main(String[] args) {
 
 		try {
@@ -59,9 +55,9 @@ public class Menu {
 		dbman.connect();
 		userman.connect();
 		int opcion;
-		System.out.println("\n¡Bienvenido a la Granja Paraíso!");
+		System.out.println("¡Bienvenido a la Granja Paraíso!");
 		do {
-			System.out.println("\nElige una opción:");
+			System.out.println("Elige una opción:");
 			System.out.println("1. Iniciar sesión");
 			System.out.println("2. ¿Eres nuevo en nuestra granja? Crea una cuenta");
 			System.out.println("0. Salir");
@@ -80,6 +76,7 @@ public class Menu {
 			case 2:
 				crearCuenta();
 				break;
+
 			case 0:
 				break;
 			}
@@ -108,11 +105,14 @@ public class Menu {
 			LOGGER.info(usuario.toString());
 
 			userman.addUsuario(usuario); //Persistimos el objeto en la base de datos
-			System.out.println("Te has registrado con éxito");
+			System.out.println("El email y la contraseña se han guardado correctamente");
 			LOGGER.info(usuario.toString());
-			Cliente cliente = new Cliente (usuario.getId(), nombre);
-			dbman.addCliente(cliente);
 
+			if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
+				addEmpleado(nombre,usuario);
+			}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
+				addCliente(nombre, usuario);
+			}
 		} catch (IOException e) {
 			LOGGER.warning("Error al registrarse");
 			e.printStackTrace();
@@ -122,7 +122,38 @@ public class Menu {
 		}
 
 	}
+	
+
 	private static void iniciarSesion() {
+		try {
+			System.out.println("Indique su email");
+			String email = reader.readLine();
+			System.out.println("Indique su contraseña");
+			String password = reader.readLine();
+			//Comprobamos la contraseña
+			Usuario usuario = userman.verifyPassword(email , password);
+			
+			if(usuario == null) {
+				System.out.println("Email o contraseña incorrectos");
+			}else {
+				//IgnoreCase ignora entre mayúsculas y minusculas
+				if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
+					menuEmpleado();
+
+				}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
+				//menuCliente();
+				}
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		
+		}
+		
+	}
+
+
+	private static void actualizarContrasenia() {
 
 		try {
 			System.out.println("Indique su email");
@@ -131,28 +162,20 @@ public class Menu {
 			String password = reader.readLine();
 			//Comprobamos la contraseña
 			Usuario usuario = userman.verifyPassword(email , password);
+			
 			if(usuario == null) {
 				System.out.println("Email o contraseña incorrectos");
 			}else {
-				//IgnoreCase ignora entre mayúsculas y minusculas
-				if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
-					menuEmpleado();
-				}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
-					menuCliente();
-				}
+				System.out.println("Introduzca la nueva contraseña");
+				String new_password = reader.readLine();
+				//Comprobamos la contraseña
+				userman.updatePassword(usuario,new_password);	
+				System.out.println("contraseña actualizada");
 			}
-
 		} catch (IOException e) {
-
 			e.printStackTrace();
 		}
-
-
-
 	}
-
-
-
 	private static int  menuConsultar() {
 		int opcionConsultar;
 		System.out.println("Consultar:");
@@ -168,7 +191,6 @@ public class Menu {
 			e.printStackTrace();
 		}
 
-
 		return opcionConsultar;
 
 	}
@@ -178,9 +200,7 @@ public class Menu {
 		System.out.println("Inserta:");
 		System.out.println("1. Plantacion");
 		System.out.println("2. Factura");
-		System.out.println("3. Empleado");
-		System.out.println("4. Cliente");
-		System.out.println("5. Insertar imagen");
+		System.out.println("3. Insertar imagen");
 		System.out.println("0. Salir");
 		try {
 			opcionInsertar = Integer.parseInt(reader.readLine());
@@ -198,105 +218,74 @@ public class Menu {
 
 	public static void menuEmpleado() {
 		int opcion_empleado=-1;
-		System.out.println("Menú empleado");
-		System.out.println("Elije una opción:");
-		System.out.println("1. Consultar");
-		System.out.println("2. Insertar");
-		System.out.println("3. Borrar");
-		System.out.println("4. Actualizar teléfono");
-		System.out.println("5. Comprar");
-		System.out.println("0. Salir");
+		while(opcion_empleado!=0) {
+			System.out.println("Menú empleado");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Consultar");
+			System.out.println("2. Insertar");
+			System.out.println("3. Borrar");
+			System.out.println("4. Actualizar teléfono");
+			System.out.println("5. Actualizar contraseña");
+			System.out.println("0. Salir");
 
-		try {
-			opcion_empleado = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcion_empleado);
-		} catch (NumberFormatException | IOException e) {
-			opcion_empleado = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-
-
-		switch(opcion_empleado) {
-		case 1: //Opción consultar
-
-			int opcionConsultar = menuConsultar();
-
-			switch(opcionConsultar){
-			case 1:
-				mostrarEmpleados();
-				break;
-			case 2:
-				searchCliente();
-				break;
-
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
 			}
-			break;
 
-		case 2: //Opción Insertar
-			int opcionInsertar = menuInserta();
 
-			switch(opcionInsertar){
-			case 1:
-				addPlantacion();
+			switch(opcion_empleado) {
+			case 1: //Opción consultar
+
+				int opcionConsultar = menuConsultar();
+
+				switch(opcionConsultar){
+				case 1:
+					mostrarEmpleados();
+					break;
+				case 2:
+					searchCliente();
+					break;
+
+				}
 				break;
-			case 2:
-				addFactura();
+
+			case 2: //Opción Insertar
+				int opcionInsertar = menuInserta();
+
+				switch(opcionInsertar){
+				case 1:
+					addPlantacion();
+					break;
+				case 2:
+					addFactura();
+					break;
+				case 3:
+					addImagen();
+					break;
+				case 0:
+					break;
+				}
+				//Opcion de insertar
 				break;
-			case 3:
-				addEmpleado();
+
+			case 3: //Borrar
+				eliminarEmpleado();
 				break;
-			case 4:
-				addCliente();
+			case 4: //Actualizar
+				actualizarTelefono();
 				break;
-			case 5:
-				addImagen();
-				break;
-			case 0:
+			case 5: //Actualizar contraseña
+				actualizarContrasenia();
 				break;
 			}
-			//Opcion de insertar
-			break;
-
-		case 3: //Borrar
-			eliminarEmpleado();
-			break;
-		case 4: //Actualizar
-			actualizarTelefono();
-			break;
 		}
 	}
-
-	private static void menuCliente() {
-		/*TENEMOS QUE MIRAR ESTO. EL CLIENTE EN NUESTRA APLICACIÓN YA SE HA REGISTRADO.*/
-		int opcion_cliente = -1;
-		System.out.println("1. Registrarse");
-		//System.out.println("1. ¿Es usted cliente nuestro?");
-		System.out.println("0. Salir");
-
-		try {
-			opcion_cliente = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcion_cliente);
-		} catch (NumberFormatException | IOException e) {
-			opcion_cliente = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-
-		switch(opcion_cliente) {
-		case 1: 
-			addCliente();
-			break;
-		case 0:
-			System.out.println("Que tenga un buen día.");
-			break;
-		default:
-			System.out.println("El número introducido no es válido.");
-			break;
-		}
-	}
-
-
+	
 	//Añadir
 	private static void addFactura() {
 
@@ -340,10 +329,10 @@ public class Menu {
 	}
 
 
-	private static void addEmpleado() {
+	private static void addEmpleado(String nombre, Usuario usuario) {
 		try {
-			System.out.println("Indique el nombre del empleado: ");
-			String nombre = reader.readLine();
+			/*System.out.println("Indique el nombre del empleado: ");
+			String nombre = reader.readLine();*/
 
 			System.out.println("Indique el número de teléfono: ");
 			int telefono = Integer.parseInt(reader.readLine());
@@ -359,8 +348,8 @@ public class Menu {
 
 			System.out.println("Indique el sueldo: ");
 			float sueldo = Float.parseFloat(reader.readLine());
-
-			Empleado empleado = new Empleado(nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
+			/*Empleado empleado = new Empleado(nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);*/
+			Empleado empleado = new Empleado(usuario.getId(), nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
 			dbman.addEmpleado(empleado);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -368,12 +357,9 @@ public class Menu {
 		}
 
 	}
-
-	private static void addCliente() {
+	//Revisar el menú de cliente de JDBC y eliminar este método.
+	private static void addCliente(String nombre, Usuario usuario) {
 		try {
-			System.out.println("Indique el nombre del cliente: ");
-			String nombre = reader.readLine();
-
 			System.out.println("Indique el número de teléfono: ");
 			int telefono = Integer.parseInt(reader.readLine());
 
@@ -382,14 +368,13 @@ public class Menu {
 
 			System.out.println("Indique el DNI del cliente: ");
 			String dni = reader.readLine();
-
-			Cliente cliente = new Cliente (nombre, telefono, direccion, dni);
+			System.out.println("Te has registrado con éxito");
+			Cliente cliente = new Cliente (usuario.getId(), nombre, telefono, direccion, dni);
 			dbman.addCliente(cliente);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 	private static void addImagen() {
 		try {
