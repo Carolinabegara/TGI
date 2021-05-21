@@ -191,7 +191,11 @@ public class Menu {
 				System.out.println("Email o contraseña incorrectos");
 			}else {
 				System.out.println("Procedemos a borrar el usuario");
-				userman.deleteUser(usuario);	
+				userman.deleteUser(usuario);
+				Empleado empleado = new Empleado();
+				//empleado = dbman.searchEmpleadoById(usuario.getId());
+				//Empleado empleado = new Empleado(usuario.getId(), nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
+				//dbman.addEmpleado(empleado);
 				System.out.println("Usuario borrado");
 			}
 		} catch (IOException e) {
