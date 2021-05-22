@@ -17,11 +17,16 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.xml.bind.JAXBException;
+
 import db.interfaces.DBManager;
 import db.interfaces.UsuariosManager;
+import db.interfaces.XMLManager;
 import db.jdbc.JDBCManager;
 import db.jpa.JPAUsuariosManager;
+import db.xml.TestXML;
 import logging.MyLogger;
+import pojos.Animal;
 import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
@@ -33,6 +38,9 @@ public class Menu {
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 	private static DBManager dbman = new JDBCManager();
 	private static UsuariosManager userman = new JPAUsuariosManager();
+	
+	private static XMLManager xmlman = new TestXML();
+	
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -45,7 +53,7 @@ public class Menu {
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws JAXBException {
 
 		try {
 			MyLogger.setup();
@@ -76,7 +84,10 @@ public class Menu {
 			case 2:
 				crearCuenta();
 				break;
-
+			case 3:
+				Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));
+				xmlman.marshalling(animal);
+				break;
 			case 0:
 				break;
 			}

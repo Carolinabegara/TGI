@@ -9,5 +9,7 @@
 	<classpathentry kind="lib" path="lib/sqlite-jdbc-3.34.0.jar"/>
 	<classpathentry kind="lib" path="lib/eclipselink.jar"/>
 	<classpathentry kind="lib" path="lib/jakarta.persistence-api-2.2.3.jar"/>
+	<classpathentry kind="lib" path="/EmpresaXML/lib/jaxb-impl-2.3.3.jar"/>
+	<classpathentry kind="lib" path="lib/jakarta.xml.bind-api-2.3.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
