@@ -53,6 +53,11 @@ public class Menu {
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
 
+	private final static String[] CLIENTES_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
+	private final static int[] CLIENTES_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
+	private final static String[] CLIENTES_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
+	private final static String[] CLIENTES_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
+	
 	public static void main(String[] args) throws JAXBException {
 
 		try {
@@ -213,43 +218,7 @@ public class Menu {
 			e.printStackTrace();
 		}
 	}
-	private static int  menuConsultar() {
-		int opcionConsultar;
-		System.out.println("Consultar:");
-		System.out.println("1. Empleado");
-		System.out.println("2. Cliente");
-
-		try {
-			opcionConsultar = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcionConsultar);
-		} catch (NumberFormatException | IOException e) {
-			opcionConsultar = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-
-		return opcionConsultar;
-
-	}
-
-	private static int  menuInserta() {
-		int opcionInsertar;
-		System.out.println("Inserta:");
-		System.out.println("1. Plantacion");
-		System.out.println("2. Factura");
-		System.out.println("3. Insertar imagen");
-		System.out.println("0. Salir");
-		try {
-			opcionInsertar = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcionInsertar);
-		} catch (NumberFormatException | IOException e) {
-			opcionInsertar = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-		return opcionInsertar;
-	}
-
+	
 	public static void menuEmpleado() {
 		int opcion_empleado=-1;
 		while(opcion_empleado!=0) {
@@ -260,6 +229,8 @@ public class Menu {
 			System.out.println("3. Borrar");
 			System.out.println("4. Actualizar teléfono");
 			System.out.println("5. Actualizar contraseña");
+			System.out.println("6. Generar empleados de prueba");
+			System.out.println("7. Generar clientes de prueba");
 			System.out.println("0. Salir");
 
 			try {
@@ -340,9 +311,56 @@ public class Menu {
 			case 5: //Actualizar contraseña
 				actualizarContrasenia();
 				break;
+			case 6:
+				generarEmpleados();
+				break;
+			case 7:
+				generarClientes();
+				break;
+			case 0:
+				break;
 			}
 		}
 	}
+	
+	private static int  menuConsultar() {
+		int opcionConsultar;
+		System.out.println("Consultar:");
+		System.out.println("1. Empleado");
+		System.out.println("2. Cliente");
+
+		try {
+			opcionConsultar = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcionConsultar);
+		} catch (NumberFormatException | IOException e) {
+			opcionConsultar = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
+
+		return opcionConsultar;
+
+	}
+
+	private static int  menuInserta() {
+		int opcionInsertar;
+		System.out.println("Inserta:");
+		System.out.println("1. Plantacion");
+		System.out.println("2. Factura");
+		System.out.println("3. Insertar imagen");
+		System.out.println("0. Salir");
+		try {
+			opcionInsertar = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcionInsertar);
+		} catch (NumberFormatException | IOException e) {
+			opcionInsertar = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
+		return opcionInsertar;
+	}
+
+	
 
 	//Añadir
 	private static void addFactura() {
@@ -376,7 +394,8 @@ public class Menu {
 
 			System.out.println("Indique las hectáreas: ");
 			float hectareas = Float.parseFloat(reader.readLine());
-
+			
+			//addProducto();
 			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
 			dbman.addPlantacion(plantacion);
 		} catch (IOException e) {
@@ -385,7 +404,26 @@ public class Menu {
 		}
 
 	}
+/*	private static void addProducto() {
+		try {
+			System.out.println("Indique el nombre del producto: ");
+			String nombre = reader.readLine();
+			
+			System.out.println("Indique la última vez que se regó (yyyy-MM-dd): ");
+			LocalDate ultimo_regado = LocalDate.parse(reader.readLine(), formatter);
 
+			System.out.println("Indique las hectáreas: ");
+			float hectareas = Float.parseFloat(reader.readLine());
+			
+			
+			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
+			dbman.addPlantacion(plantacion);
+		} catch (IOException e) {
+			//
+			e.printStackTrace();
+		}
+
+	}*/
 
 	private static void addEmpleado(String nombre, Usuario usuario) {
 		try {
@@ -460,8 +498,21 @@ public class Menu {
 			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_TELEFONOS[i], EMPLEADOS_DIRECCIONES[i], EMPLEADOS_DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
 			dbman.addEmpleado(empleado);
 		}
-		System.out.println("Se han generado " + EMPLEADOS_NOMBRES.length + " empleados.");
+		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " empleados.");
 		mostrarEmpleados();
+
+	}
+	
+	
+	
+	
+	private static void generarClientes() {
+		for(int i = 0; i < CLIENTES_NOMBRES.length; i++) {
+			Cliente cliente = new Cliente (CLIENTES_NOMBRES[i], CLIENTES_TELEFONOS[i], CLIENTES_DIRECCIONES[i], CLIENTES_DNI[i]);
+			dbman.addCliente(cliente);
+		}
+		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " clientes.");
+		mostrarClientes();
 
 	}
 	//Búsquedas
@@ -473,6 +524,16 @@ public class Menu {
 			System.out.println(empleado);
 		}
 	}
+	
+	//Búsquedas
+		private static void mostrarClientes() {
+			List<Cliente> clientes = dbman.searchClientes();
+			//Hacemos un bucle para recorrer la lista de empleados
+			System.out.println("Se han encontrado los siguientes clientes");
+			for(Cliente cliente : clientes) {
+				System.out.println(cliente);
+			}
+		}
 
 	private static void searchCliente() {
 		List<Cliente> clientes = dbman.searchClientes();

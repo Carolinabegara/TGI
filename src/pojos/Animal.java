@@ -17,7 +17,7 @@ import javax.xml.bind.annotation.XmlType;
 //Hay que poner esta línea cada vez que queramos anotar una clase para utilizar XML
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlRootElement(name = "animal")
-@XmlType(propOrder={"especie", "fecha_Nac","foto"})
+//@XmlType(propOrder= {"especie"})
 
 public class Animal implements Serializable {
 
@@ -26,7 +26,7 @@ public class Animal implements Serializable {
 	private int id;
 	@XmlElement
 	private String especie;
-	@XmlTransient
+	@XmlElement
 	//No sabemos que anotación poner en fecha
 	private Date fecha_Nac;
 	@XmlTransient

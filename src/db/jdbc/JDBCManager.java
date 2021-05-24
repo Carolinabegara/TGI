@@ -17,7 +17,7 @@ public class JDBCManager implements DBManager{
 	private Connection c;
 
 	private final String addPlantacion = "INSERT INTO Plantaciones (Hectareas, HoraRegado) VALUES (?,?);";
-	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, Metodo_de_pago) VALUES (?,?,?);";
+	private final String addFactura = "INSERT INTO Facturas (Fecha, Importe, MetodoPago) VALUES (?,?,?);";
 	private final String addEmpleado = "INSERT INTO Empleados (Nombre, Telefono, Direccion, DNI, Fech_Nac, Sueldo) VALUES (?,?,?,?,?,?);";
 	private final String addCliente = "INSERT INTO Clientes (Nombre, Telefono, Direccion, DNI) VALUES (?,?,?,?);";
 	private final String eliminarUnEmpleado = "DELETE FROM Empleados WHERE Nombre LIKE ?;";
