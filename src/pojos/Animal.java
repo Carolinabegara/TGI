@@ -12,6 +12,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import db.xml.SQLDateAdapter;
 
 
 //Hay que poner esta línea cada vez que queramos anotar una clase para utilizar XML
@@ -27,7 +30,7 @@ public class Animal implements Serializable {
 	@XmlElement
 	private String especie;
 	@XmlElement
-	//No sabemos que anotación poner en fecha
+	@XmlJavaTypeAdapter(SQLDateAdapter.class)
 	private Date fecha_Nac;
 	@XmlTransient
 	private byte[] foto;
