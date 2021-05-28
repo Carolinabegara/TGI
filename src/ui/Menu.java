@@ -45,7 +45,7 @@ public class Menu {
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 
-	//PRUEBA
+	//DATOS DE PRUEBA
 	private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
 	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
 	private final static String[] EMPLEADOS_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
@@ -68,6 +68,14 @@ public class Menu {
 		dbman.connect();
 		userman.connect();
 		int opcion;
+		
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//														    															//
+//________________________________________________MENUS_________________________________________________________________//
+//                                                                                                                      //
+//                                                                                                                      //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
 		System.out.println("¡Bienvenido a la Granja Paraíso!");
 		do {
 			System.out.println("Elige una opción:");
@@ -84,10 +92,10 @@ public class Menu {
 			}
 			switch(opcion) {
 			case 1:
-				iniciarSesion();
+				iniciarSesion();//JPA
 				break;
 			case 2:
-				crearCuenta();
+				crearCuenta();//JPA
 				break;
 			case 3:
 				Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));
@@ -101,45 +109,162 @@ public class Menu {
 		userman.disconnect();
 		dbman.disconnect();
 	}
-	private static void crearCuenta() {
-		try {
-			System.out.println("E-mail:");
-			String email = reader.readLine();
-			System.out.println("Contraseña:");
-			//No queremos guardar nuestra contraña en claro en nuestra base de datos
-			String pass = reader.readLine();
-			MessageDigest md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
-			md.update(pass.getBytes());
-			byte[] hash = md.digest();//Convertimos la contraseña en un array de bytes
-			System.out.println("Nombre:");
-			String nombre = reader.readLine();
-			System.out.println(userman.getRoles());//Aquí le mostramos los roles al usuario
-			System.out.println("Id del rol:");
-			int rolId = Integer.parseInt(reader.readLine());
-			Rol rol = userman.getRolById(rolId);
-			Usuario usuario = new Usuario(email, hash, rol);
-			LOGGER.info(usuario.toString());
+	
+	
+//_________________________MENU EMPLEADO____________________________________
+	
+	public static void menuEmpleado() {
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Menú empleado");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Consultar");
+			System.out.println("2. Insertar");
+			System.out.println("3. Borrar");
+			System.out.println("4. Actualizar teléfono");
+			System.out.println("5. Actualizar contraseña");
+			System.out.println("6. Generar empleados de prueba");
+			System.out.println("7. Generar clientes de prueba");
+			System.out.println("0. Salir");
 
-			userman.addUsuario(usuario); //Persistimos el objeto en la base de datos
-			System.out.println("El email y la contraseña se han guardado correctamente");
-			LOGGER.info(usuario.toString());
-
-			if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
-				addEmpleado(nombre,usuario);
-			}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
-				addCliente(nombre, usuario);
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			LOGGER.warning("Error al registrarse");
-			e.printStackTrace();
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
+
+
+			switch(opcion_empleado) {
+			case 1: 
+
+				int opcionConsultar = menuConsultar();
+
+				switch(opcionConsultar){
+				case 1:
+					mostrarEmpleados();
+					break;
+				case 2:
+					mostrarClientes();
+					break;
+
+				}
+				break;
+
+			case 2: 
+				int opcionInsertar = menuInserta();
+
+				switch(opcionInsertar){
+				case 1:
+					addPlantacion();
+					break;
+				case 2:
+					addFactura();
+					break;
+				case 3:
+					addImagen();
+					break;
+				case 0:
+					break;
+				}
+				break;
+
+			case 3: 
+				int borrar =-1;
+				System.out.println("1. Borrar empleado");
+				System.out.println("2. Borrar usuario");
+				System.out.println("0. Salir");
+				try {
+					borrar = Integer.parseInt(reader.readLine());
+					LOGGER.info("El usuario elige " + borrar);
+				} catch (NumberFormatException | IOException e) {
+					borrar = -1;
+					LOGGER.warning("El usuario no ha introducido un número");
+					e.printStackTrace();
+				}
+				switch(borrar) {
+				case 1:
+					eliminarEmpleado();
+					break;
+				case 2:
+					borrarUsuario();//JPA
+					//Ponemos opcion_empleado = 0 porque cuando borras un usuario queremos echarle y que inicie sesión de nuevo
+					opcion_empleado =0;
+					break;
+				case 0:
+					break;
+				}
+
+				break;
+			case 4: 
+				actualizarTelefono();
+				break;
+			case 5: 
+				actualizarContrasenia();//JPA
+				break;
+			case 6:
+				generarEmpleados();
+				break;
+			case 7:
+				generarClientes();
+				break;
+			case 0:
+				break;
+			}
+		}
+	}
+	
+//_____________________MENÚ_CONSULTA_________________
+	
+	private static int  menuConsultar() {
+		int opcionConsultar;
+		System.out.println("Consultar:");
+		System.out.println("1. Empleado");
+		System.out.println("2. Cliente");
+
+		try {
+			opcionConsultar = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcionConsultar);
+		} catch (NumberFormatException | IOException e) {
+			opcionConsultar = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
 			e.printStackTrace();
 		}
 
+		return opcionConsultar;
+
 	}
+//__________________________MENÚ_INSERTAR______________________________________
 
+	private static int  menuInserta() {
+		int opcionInsertar;
+		System.out.println("Inserta:");
+		System.out.println("1. Plantacion");
+		System.out.println("2. Factura");
+		System.out.println("3. Insertar imagen");
+		System.out.println("0. Salir");
+		try {
+			opcionInsertar = Integer.parseInt(reader.readLine());
+			LOGGER.info("El usuario elije " + opcionInsertar);
+		} catch (NumberFormatException | IOException e) {
+			opcionInsertar = -1;
+			LOGGER.warning("El usuario no ha introducido un número");
+			e.printStackTrace();
+		}
+		return opcionInsertar;
+	}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//																														//
+//____________________________________________MÉTODOS_JPA_______________________________________________________________//
+// 																													    //
+//  																													//
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	
+//____________________________________________INICIAR_SESIÓN____________________________________________________________//
+	
 	private static void iniciarSesion() {
 		try {
 			System.out.println("Indique su email");
@@ -168,6 +293,74 @@ public class Menu {
 
 	}
 
+//____________________________________________CREAR_CUENTA__________________________________________________________//	
+	
+	private static void crearCuenta() {
+		try {
+			System.out.println("E-mail:");
+			String email = reader.readLine();
+			System.out.println("Contraseña:");
+			//No queremos guardar nuestra contraña en claro en nuestra base de datos
+			String pass = reader.readLine();
+			MessageDigest md = MessageDigest.getInstance("MD5");//nuestro algoritmo de cifrado se llama MD5
+			md.update(pass.getBytes());
+			byte[] hash = md.digest();//Convertimos la contraseña en un array de bytes
+			System.out.println("Nombre:");
+			String nombre = reader.readLine();
+			System.out.println(userman.getRoles());//mostramos los roles al usuario
+			System.out.println("Id del rol:");
+			int rolId = Integer.parseInt(reader.readLine());
+			Rol rol = userman.getRolById(rolId);
+			Usuario usuario = new Usuario(email, hash, rol);
+			LOGGER.info(usuario.toString());
+
+			userman.addUsuario(usuario); //Persistimos el objeto en la base de datos
+			System.out.println("El email y la contraseña se han guardado correctamente");
+			LOGGER.info(usuario.toString());
+
+			if(usuario.getRol().getNombre().equalsIgnoreCase("empleado")) {
+				addEmpleado(nombre,usuario);
+			}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
+				addCliente(nombre, usuario);
+			}
+		} catch (IOException e) {
+			LOGGER.warning("Error al registrarse");
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+
+			e.printStackTrace();
+		}
+
+	}
+	
+//____________________________________________BORRAR_USUARIO____________________________________________________________//
+		
+		private static void borrarUsuario() {
+
+			try {
+				System.out.println("Indique su email");
+				String email = reader.readLine();
+				System.out.println("Indique su contraseña");
+				String password = reader.readLine();
+				//Comprobamos la contraseña
+				Usuario usuario = userman.verifyPassword(email , password);
+
+				if(usuario == null) {
+					System.out.println("Email o contraseña incorrectos");
+				}else {
+					System.out.println("Procedemos a borrar el usuario");
+					userman.deleteUser(usuario);
+//FALTA ELIMINAR EL EMPLEADO/CLIENTE QUE CORRESPONDA A DICHO USUARIO
+					System.out.println("Usuario borrado");
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+	
+//______________________________________ACTUALIZAR_CONTRASEÑA____________________________________________________________//
+
 
 	private static void actualizarContrasenia() {
 
@@ -184,7 +377,6 @@ public class Menu {
 			}else {
 				System.out.println("Introduzca la nueva contraseña");
 				String new_password = reader.readLine();
-				//Comprobamos la contraseña
 				userman.updatePassword(usuario,new_password);	
 				System.out.println("contraseña actualizada");
 			}
@@ -193,176 +385,56 @@ public class Menu {
 		}
 	}
 
-	private static void borrarUsuario() {
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//																														//
+//____________________________________________MÉTODOS_JDBC______________________________________________________________//
+//	    																												//
+//																													    //
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-		try {
-			System.out.println("Indique su email");
-			String email = reader.readLine();
-			System.out.println("Indique su contraseña");
-			String password = reader.readLine();
-			//Comprobamos la contraseña
-			Usuario usuario = userman.verifyPassword(email , password);
 
-			if(usuario == null) {
-				System.out.println("Email o contraseña incorrectos");
-			}else {
-				System.out.println("Procedemos a borrar el usuario");
-				userman.deleteUser(usuario);
-				Empleado empleado = new Empleado();
-				//empleado = dbman.searchEmpleadoById(usuario.getId());
-				//Empleado empleado = new Empleado(usuario.getId(), nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
-				//dbman.addEmpleado(empleado);
-				System.out.println("Usuario borrado");
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+//1.CONSULTAR__________________________MOSTRAR_EMPLEADOS________________________________________________________________//
+	
+	private static void mostrarEmpleados() {
+		List<Empleado> empleados = dbman.searchEmpleados();
+		System.out.println("Se han encontrado los siguientes empleados");
+		//Hacemos un bucle para recorrer la lista de empleados
+		for(Empleado empleado : empleados) {
+			System.out.println(empleado);
 		}
 	}
 	
-	public static void menuEmpleado() {
-		int opcion_empleado=-1;
-		while(opcion_empleado!=0) {
-			System.out.println("Menú empleado");
-			System.out.println("Elije una opción:");
-			System.out.println("1. Consultar");
-			System.out.println("2. Insertar");
-			System.out.println("3. Borrar");
-			System.out.println("4. Actualizar teléfono");
-			System.out.println("5. Actualizar contraseña");
-			System.out.println("6. Generar empleados de prueba");
-			System.out.println("7. Generar clientes de prueba");
-			System.out.println("0. Salir");
+//1.CONSULTAR__________________________MOSTRAR_CLIENTES________________________________________________________________//
+	
+		private static void mostrarClientes() {
+			List<Cliente> clientes = dbman.searchClientes();
+			System.out.println("Se han encontrado los siguientes clientes");
+			for(Cliente cliente : clientes) {
+				System.out.println(cliente);
+			}
+		}
 
+//2.INSERTAR__________________________PLANTACIÓN_______________________________________________________________________//	
+
+		private static void addPlantacion() {
 			try {
-				opcion_empleado = Integer.parseInt(reader.readLine());
-				LOGGER.info("El usuario elije " + opcion_empleado);
-			} catch (NumberFormatException | IOException e) {
-				opcion_empleado = -1;
-				LOGGER.warning("El usuario no ha introducido un número");
+				System.out.println("Indique la última vez que se regó (yyyy-MM-dd): ");
+				LocalDate ultimo_regado = LocalDate.parse(reader.readLine(), formatter);
+
+				System.out.println("Indique las hectáreas: ");
+				float hectareas = Float.parseFloat(reader.readLine());
+				
+				//addProducto();
+				Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
+				dbman.addPlantacion(plantacion);
+			} catch (IOException e) {
+			
 				e.printStackTrace();
 			}
 
-
-			switch(opcion_empleado) {
-			case 1: //Opción consultar
-
-				int opcionConsultar = menuConsultar();
-
-				switch(opcionConsultar){
-				case 1:
-					mostrarEmpleados();
-					break;
-				case 2:
-					searchCliente();
-					break;
-
-				}
-				break;
-
-			case 2: //Opción Insertar
-				int opcionInsertar = menuInserta();
-
-				switch(opcionInsertar){
-				case 1:
-					addPlantacion();
-					break;
-				case 2:
-					addFactura();
-					break;
-				case 3:
-					addImagen();
-					break;
-				case 0:
-					break;
-				}
-				//Opcion de insertar
-				break;
-
-			case 3: //Borrar
-				int borrar =-1;
-				System.out.println("1. Borrar empleado");
-				System.out.println("2. Borrar usuario");
-				System.out.println("0. Salir");
-				try {
-					borrar = Integer.parseInt(reader.readLine());
-					LOGGER.info("El usuario elige " + borrar);
-				} catch (NumberFormatException | IOException e) {
-					borrar = -1;
-					LOGGER.warning("El usuario no ha introducido un número");
-					e.printStackTrace();
-				}
-				switch(borrar) {
-				case 1:
-					eliminarEmpleado();
-					break;
-				case 2:
-					borrarUsuario();
-					//Ponemos opcion_empleado = 0 porque cuando borras un usuario ya no puede hacer nada.
-					opcion_empleado =0;
-					break;
-				case 0:
-					break;
-				}
-
-				break;
-			case 4: //Actualizar
-				actualizarTelefono();
-				break;
-			case 5: //Actualizar contraseña
-				actualizarContrasenia();
-				break;
-			case 6:
-				generarEmpleados();
-				break;
-			case 7:
-				generarClientes();
-				break;
-			case 0:
-				break;
-			}
 		}
-	}
-	
-	private static int  menuConsultar() {
-		int opcionConsultar;
-		System.out.println("Consultar:");
-		System.out.println("1. Empleado");
-		System.out.println("2. Cliente");
-
-		try {
-			opcionConsultar = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcionConsultar);
-		} catch (NumberFormatException | IOException e) {
-			opcionConsultar = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-
-		return opcionConsultar;
-
-	}
-
-	private static int  menuInserta() {
-		int opcionInsertar;
-		System.out.println("Inserta:");
-		System.out.println("1. Plantacion");
-		System.out.println("2. Factura");
-		System.out.println("3. Insertar imagen");
-		System.out.println("0. Salir");
-		try {
-			opcionInsertar = Integer.parseInt(reader.readLine());
-			LOGGER.info("El usuario elije " + opcionInsertar);
-		} catch (NumberFormatException | IOException e) {
-			opcionInsertar = -1;
-			LOGGER.warning("El usuario no ha introducido un número");
-			e.printStackTrace();
-		}
-		return opcionInsertar;
-	}
-
-	
-
-	//Añadir
+//2.INSERTAR__________________________FACTURA_________________________________________________________________________//	
+		
 	private static void addFactura() {
 
 		try {
@@ -386,92 +458,9 @@ public class Menu {
 
 
 	}
-
-	private static void addPlantacion() {
-		try {
-			System.out.println("Indique la última vez que se regó (yyyy-MM-dd): ");
-			LocalDate ultimo_regado = LocalDate.parse(reader.readLine(), formatter);
-
-			System.out.println("Indique las hectáreas: ");
-			float hectareas = Float.parseFloat(reader.readLine());
-			
-			//addProducto();
-			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
-			dbman.addPlantacion(plantacion);
-		} catch (IOException e) {
-			//
-			e.printStackTrace();
-		}
-
-	}
-/*	private static void addProducto() {
-		try {
-			System.out.println("Indique el nombre del producto: ");
-			String nombre = reader.readLine();
-			
-			System.out.println("Indique la última vez que se regó (yyyy-MM-dd): ");
-			LocalDate ultimo_regado = LocalDate.parse(reader.readLine(), formatter);
-
-			System.out.println("Indique las hectáreas: ");
-			float hectareas = Float.parseFloat(reader.readLine());
-			
-			
-			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
-			dbman.addPlantacion(plantacion);
-		} catch (IOException e) {
-			//
-			e.printStackTrace();
-		}
-
-	}*/
-
-	private static void addEmpleado(String nombre, Usuario usuario) {
-		try {
-			/*System.out.println("Indique el nombre del empleado: ");
-			String nombre = reader.readLine();*/
-
-			System.out.println("Indique el número de teléfono: ");
-			int telefono = Integer.parseInt(reader.readLine());
-
-			System.out.println("Indique la dirección: ");
-			String direccion = reader.readLine();
-
-			System.out.println("Indique el DNI del empleado: ");
-			String dni = reader.readLine();
-
-			System.out.println("Indique la fecha de nacimiento (yyyy-MM-dd): ");
-			LocalDate fech_Nac = LocalDate.parse(reader.readLine(), formatter);
-
-			System.out.println("Indique el sueldo: ");
-			float sueldo = Float.parseFloat(reader.readLine());
-			/*Empleado empleado = new Empleado(nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);*/
-			Empleado empleado = new Empleado(usuario.getId(), nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
-			dbman.addEmpleado(empleado);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	}
-	//Revisar el menú de cliente de JDBC y eliminar este método.
-	private static void addCliente(String nombre, Usuario usuario) {
-		try {
-			System.out.println("Indique el número de teléfono: ");
-			int telefono = Integer.parseInt(reader.readLine());
-
-			System.out.println("Indique la dirección: ");
-			String direccion = reader.readLine();
-
-			System.out.println("Indique el DNI del cliente: ");
-			String dni = reader.readLine();
-			System.out.println("Te has registrado con éxito");
-			Cliente cliente = new Cliente (usuario.getId(), nombre, telefono, direccion, dni);
-			dbman.addCliente(cliente);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	
+//2.INSERTAR__________________________IMAGEN_________________________________________________________________________//
+	
 	private static void addImagen() {
 		try {
 			System.out.println("Indique el id del empleado");
@@ -484,66 +473,15 @@ public class Menu {
 			empleado.setFoto(readFile(imagenNombre));
 			dbman.addImagen(empleado);
 		} catch (NumberFormatException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			
 			e.printStackTrace();
 		}
 
 	}
-	private static void generarEmpleados() {
-		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
-			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
-			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_TELEFONOS[i], EMPLEADOS_DIRECCIONES[i], EMPLEADOS_DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
-			dbman.addEmpleado(empleado);
-		}
-		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " empleados.");
-		mostrarEmpleados();
-
-	}
-	
-	
-	
-	
-	private static void generarClientes() {
-		for(int i = 0; i < CLIENTES_NOMBRES.length; i++) {
-			Cliente cliente = new Cliente (CLIENTES_NOMBRES[i], CLIENTES_TELEFONOS[i], CLIENTES_DIRECCIONES[i], CLIENTES_DNI[i]);
-			dbman.addCliente(cliente);
-		}
-		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " clientes.");
-		mostrarClientes();
-
-	}
-	//Búsquedas
-	private static void mostrarEmpleados() {
-		List<Empleado> empleados = dbman.searchEmpleados();
-		//Hacemos un bucle para recorrer la lista de empleados
-		System.out.println("Se han encontrado los siguientes empleados");
-		for(Empleado empleado : empleados) {
-			System.out.println(empleado);
-		}
-	}
-	
-	//Búsquedas
-		private static void mostrarClientes() {
-			List<Cliente> clientes = dbman.searchClientes();
-			//Hacemos un bucle para recorrer la lista de empleados
-			System.out.println("Se han encontrado los siguientes clientes");
-			for(Cliente cliente : clientes) {
-				System.out.println(cliente);
-			}
-		}
-
-	private static void searchCliente() {
-		List<Cliente> clientes = dbman.searchClientes();
-		//Hacemos un bucle para recorrer la lista de empleados
-		System.out.println("Se han encontrado los siguientes clientes");
-		for(Cliente cliente : clientes) {
-			System.out.println(cliente);
-		}
-	}
-
+//3.BORRAR__________________________ELIMINAR_EMPLEADO__________________________________________________________________//
 	private static void eliminarEmpleado() {
 		mostrarEmpleados();
 		System.out.println("Introduzca nombre del empleado:");
@@ -571,10 +509,11 @@ public class Menu {
 				System.out.println("El empleado no existe");
 			}
 		} catch (NumberFormatException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
+	
+//4.ACTUALIZAR__________________________TELÉFONO__________________________________________________________________//
 
 	private static void actualizarTelefono(){
 		mostrarEmpleados();
@@ -605,14 +544,94 @@ public class Menu {
 				System.out.println("El empleado no existe");
 			}
 		} catch (NumberFormatException | IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+//6.DATOS_DE_PRUEBA__________________________GENERAR_EMPLEADOS_______________________________________________________//
+	
+	
+	private static void generarEmpleados() {
+		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
+			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
+			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_TELEFONOS[i], EMPLEADOS_DIRECCIONES[i], EMPLEADOS_DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
+			dbman.addEmpleado(empleado);
+		}
+		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " empleados.");
+		mostrarEmpleados();
+
+	}
+	
+//6.DATOS_DE_PRUEBA__________________________GENERAR_CLIENTES_______________________________________________________//	
+	
+	
+	private static void generarClientes() {
+		for(int i = 0; i < CLIENTES_NOMBRES.length; i++) {
+			Cliente cliente = new Cliente (CLIENTES_NOMBRES[i], CLIENTES_TELEFONOS[i], CLIENTES_DIRECCIONES[i], CLIENTES_DNI[i]);
+			dbman.addCliente(cliente);
+		}
+		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " clientes.");
+		mostrarClientes();
+
+	}
+
+//________________________________________AÑADIR_EMPLEADO_____________________________________________________________//
+//Estos dos métodos se utilizan para crear una cuenta
+	private static void addEmpleado(String nombre, Usuario usuario) {
+		try {
+
+			System.out.println("Indique el número de teléfono: ");
+			int telefono = Integer.parseInt(reader.readLine());
+
+			System.out.println("Indique la dirección: ");
+			String direccion = reader.readLine();
+
+			System.out.println("Indique el DNI del empleado: ");
+			String dni = reader.readLine();
+
+			System.out.println("Indique la fecha de nacimiento (yyyy-MM-dd): ");
+			LocalDate fech_Nac = LocalDate.parse(reader.readLine(), formatter);
+
+			System.out.println("Indique el sueldo: ");
+			float sueldo = Float.parseFloat(reader.readLine());
+			
+			Empleado empleado = new Empleado(usuario.getId(), nombre, telefono, direccion, dni, Date.valueOf(fech_Nac), sueldo);
+			dbman.addEmpleado(empleado);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+	}
+//________________________________________AÑADIR_CLIENTE_____________________________________________________________//
+	
+	private static void addCliente(String nombre, Usuario usuario) {
+		try {
+			System.out.println("Indique el número de teléfono: ");
+			int telefono = Integer.parseInt(reader.readLine());
+
+			System.out.println("Indique la dirección: ");
+			String direccion = reader.readLine();
+
+			System.out.println("Indique el DNI del cliente: ");
+			String dni = reader.readLine();
+			System.out.println("Te has registrado con éxito");
+			Cliente cliente = new Cliente (usuario.getId(), nombre, telefono, direccion, dni);
+			dbman.addCliente(cliente);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	
+
+
+
+
+
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
 	 */
+	//método para que funcione la imagen
 	private static byte[] readFile(String file) {
 		file = "img\\" + file;
 		ByteArrayOutputStream bos = null;
