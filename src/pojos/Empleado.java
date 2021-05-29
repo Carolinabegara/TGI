@@ -1,22 +1,51 @@
 package pojos;
 import java.sql.Date;
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import db.xml.SQLDateAdapter;
+
 import java.sql.Blob;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
+
 public class Empleado {
-	
+	@XmlAttribute
 	private int id;
+	@XmlElement
 	private String nombre;
+	@XmlElement
 	private int telefono;
+	@XmlElement
 	private String direccion;
+	@XmlElement
 	private String DNI;
+	@XmlElement
+	@XmlJavaTypeAdapter(SQLDateAdapter.class)
 	private Date fecha_Nac;
+	@XmlElement
 	private float sueldo;
+	@XmlTransient
 	//Ponemos byte[] en vez de BLOB porque SQLITE no nos permite trabajar con BLOB
 	private byte[] foto;
-	
+	@XmlElement(name = "plantacion")
+	@XmlElementWrapper(name="plantaciones")
 	private List<Plantacion> plantaciones;
+	
+	@XmlElement(name = "animal")
+	@XmlElementWrapper(name="animales")
 	private List<Animal> animales;
+	
+	@XmlElement(name = "factura")
+	@XmlElementWrapper(name="facturas")
 	private List <Factura> facturas;
 	
 	public Empleado() {

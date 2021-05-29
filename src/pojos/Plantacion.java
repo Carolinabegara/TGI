@@ -1,12 +1,27 @@
 package pojos;
 import java.sql.Date;
 import java.util.List;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import db.xml.SQLDateAdapter;
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class Plantacion {
-	
+	@XmlAttribute
 	private int id;
+	@XmlElement
+	@XmlJavaTypeAdapter(SQLDateAdapter.class)
 	private Date ultimo_regado;
+	@XmlElement
 	private float hectareas;
-	
+	@XmlTransient
 	private List <Empleado> empleados;
 	
 	

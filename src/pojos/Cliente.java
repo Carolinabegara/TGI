@@ -1,15 +1,34 @@
 package pojos;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Cliente {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
+
+
+public class Cliente implements Serializable{
 	
+	private static final long serialVersionUID = 8307842871655194072L;
+	@XmlAttribute
 	private int id;
+	@XmlElement
 	private String nombre;
+	@XmlElement
 	private int telefono;
+	@XmlElement
 	private String direccion;
+	@XmlElement
 	private String dni;
-	
+	@XmlElement(name = "factura")
+	@XmlElementWrapper(name="facturas")
 	private List<Factura> facturas;
 	
 	

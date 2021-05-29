@@ -1,18 +1,33 @@
 package pojos;
 
 import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class Producto {
-	
+	@XmlAttribute
 	private int id;
+	@XmlElement
 	private String nombre;
+	@XmlElement
 	private int cantidad;
+	@XmlElement
 	private String tipo;
+	@XmlElement
 	private String unidades;
+	@XmlElement
 	private float precio;
-	
+	@XmlTransient
 	private List<Factura> facturas;
+	@XmlElement
 	private Animal animal;
+	@XmlElement
 	private Plantacion plantacion;
 	
 	public Producto() {

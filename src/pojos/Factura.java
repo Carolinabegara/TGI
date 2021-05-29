@@ -1,18 +1,35 @@
 package pojos;
 import java.sql.Date;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlRootElement
 public class Factura {
-	
+	@XmlAttribute
 	private int id;
+	
 	private Date fecha;
+	@XmlElement
 	private Float importe;
+	@XmlElement
 	private boolean metodo_de_pago;
 	
-	
+	@XmlTransient
 	private Empleado empleado;
+	@XmlTransient
 	private Cliente cliente;
+	@XmlElement(name = "producto")
+	@XmlElementWrapper(name="productos")
 	private List<Producto> productos;
 	
 	public Factura() {

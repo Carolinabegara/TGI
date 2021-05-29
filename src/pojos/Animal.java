@@ -11,7 +11,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import db.xml.SQLDateAdapter;
@@ -19,8 +18,8 @@ import db.xml.SQLDateAdapter;
 
 //Hay que poner esta línea cada vez que queramos anotar una clase para utilizar XML
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlRootElement(name = "animal")
-//@XmlType(propOrder= {"especie"})
+@XmlRootElement
+
 
 public class Animal implements Serializable {
 
@@ -51,6 +50,14 @@ public class Animal implements Serializable {
 		this.fecha_Nac = fecha_Nac;
 		this.foto = foto;
 	}
+	public Animal(int id, String especie, Date fecha_Nac) {
+		super();
+		this.id = id;
+		this.especie = especie;
+		this.fecha_Nac = fecha_Nac;
+		
+	}
+
 	public Animal(String especie, Date fecha_Nac) {
 		super();
 		this.especie = especie;
