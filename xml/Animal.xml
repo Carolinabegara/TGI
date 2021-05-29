@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!DOCTYPE producto SYSTEM "Animal.dtd">
 <animal id="0">
     <especie>Vaca</especie>
     <fecha_Nac>2020-06-12</fecha_Nac>

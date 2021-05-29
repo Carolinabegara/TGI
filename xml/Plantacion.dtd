@@ -1,0 +1,5 @@
+<!ELEMENT plantacion (ultimo_regado,hectareas)> 
+<!ATTLIST plantacion id CDATA #REQUIRED>
+<!ELEMENT ultimo_regado (#PCDATA)> 
+<!ELEMENT hectareas (#PCDATA) > 
+

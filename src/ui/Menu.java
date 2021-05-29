@@ -124,9 +124,10 @@ public class Menu {
 				System.out.println("7. Generar clientes de prueba");
 				System.out.println("8. Marshalling animal");
 				System.out.println("9. Marshalling plantacion");
-				System.out.println("10. Unmarshalling animal");
-				System.out.println("11. Unmarshalling plantacion");
-				System.out.println("12. Validar XML de producto (DTD)");
+				System.out.println("10. Marshalling producto");
+				System.out.println("11. Unmarshalling animal");
+				System.out.println("12. Unmarshalling plantacion");
+				System.out.println("13. Validar XML de producto (DTD)");
 				System.out.println("0. Salir");
 
 				try {
@@ -221,18 +222,32 @@ public class Menu {
 					xmlman.marshallingPlantacion(plantacion);
 					break;
 				case 10:
-					xmlman.unmarshallingAnimal();
-					break;
-				case 11:
-					xmlman.unmarshallingPlantacion();
-					break;
-				case 12:
 					//Animal animal2 = new Animal();
 					Plantacion plantacion2 = new Plantacion(Date.valueOf("2021-05-20"),1003);
 					Producto producto = new Producto("Patatas",100,"Plantación","Kilos",1,null,plantacion2);
 					xmlman.marshallingProducto(producto);
-					xmlman.xmlValido();
+				
 					break;
+				case 11:
+					xmlman.unmarshallingAnimal();
+					break;
+				case 12:
+					xmlman.unmarshallingPlantacion();
+					break;
+				
+				case 13:
+					File xmlFileProducto = new File("./xml/Producto.xml");
+					xmlman.xmlValido(xmlFileProducto);
+					break;
+				case 14:
+					File xmlFileAnimal = new File("./xml/Animal.xml");
+					xmlman.xmlValido(xmlFileAnimal);
+					break;
+				case 15:
+					File xmlFilePlantacion = new File("./xml/Plantacion.xml");
+					xmlman.xmlValido(xmlFilePlantacion);
+					break;
+					
 				case 0:
 					break;
 				}

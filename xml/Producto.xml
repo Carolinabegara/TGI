@@ -1,5 +1,5 @@
 
-<!DOCTYPE producto SYSTEM "producto.dtd">
+<!DOCTYPE producto SYSTEM "Producto.dtd">
 <producto id="0">
     <nombre>Patatas</nombre>
     <cantidad>100</cantidad>

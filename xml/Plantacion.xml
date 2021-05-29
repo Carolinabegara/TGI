@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!DOCTYPE producto SYSTEM "Plantacion.dtd">
 <plantacion id="0">
     <ultimo_regado>2020-06-12</ultimo_regado>
     <hectareas>1003.0</hectareas>

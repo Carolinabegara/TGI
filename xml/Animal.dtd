@@ -1,0 +1,5 @@
+<!ELEMENT animal (especie,fecha_Nac)> 
+<!ATTLIST animal id CDATA #REQUIRED>
+<!ELEMENT especie (#PCDATA)> 
+<!ELEMENT fecha_Nac (#PCDATA) > 
+

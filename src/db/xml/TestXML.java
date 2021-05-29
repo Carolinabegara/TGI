@@ -13,6 +13,10 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -25,39 +29,40 @@ import pojos.Producto;
 
 
 public class TestXML implements XMLManager{
-//	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
-	//No sabemos si la fecha está bien puesta así.
-	
 	
 	@Override
 	public void marshallingAnimal(Animal animal) throws JAXBException {
-	
+
 		// Creamos el JAXBContext
-		JAXBContext jaxbC= JAXBContext.newInstance(Animal.class);
-		// Creamos el JAXBMarshaller
-		Marshaller jaxbM= jaxbC.createMarshaller();
-		// Formateo bonito
-		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		// Escribiendo en un fichero
-		File XMLfile= new File("./xml/Animal.xml");
-		jaxbM.marshal(animal, XMLfile);
-		// Escribiendo por pantalla
-		jaxbM.marshal(animal, System.out);
+				JAXBContext jaxbC = JAXBContext.newInstance(Animal.class);
+				// Creamos el JAXBMarshaller
+				Marshaller jaxbM = jaxbC.createMarshaller();
+				// Formateo bonito
+				jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+				jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"Animal.dtd\">");
+				jaxbM.setProperty("com.sun.xml.bind.xmlDeclaration", false);
+				// Escribiendo en un fichero
+				File XMLfile = new File("./xml/Animal.xml");
+				jaxbM.marshal(animal, XMLfile);
+				// Escribiendo por pantalla
+				jaxbM.marshal(animal, System.out);
 	}
 	@Override
 	public void marshallingPlantacion(Plantacion plantacion) throws JAXBException {
 
 		// Creamos el JAXBContext
-		JAXBContext jaxbC= JAXBContext.newInstance(Plantacion.class);
-		// Creamos el JAXBMarshaller
-		Marshaller jaxbM= jaxbC.createMarshaller();
-		// Formateo bonito
-		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		// Escribiendo en un fichero
-		File XMLfile= new File("./xml/Plantacion.xml");
-		jaxbM.marshal(plantacion, XMLfile);
-		// Escribiendo por pantalla
-		jaxbM.marshal(plantacion, System.out);
+				JAXBContext jaxbC = JAXBContext.newInstance(Plantacion.class);
+				// Creamos el JAXBMarshaller
+				Marshaller jaxbM = jaxbC.createMarshaller();
+				// Formateo bonito
+				jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+				jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"Plantacion.dtd\">");
+				jaxbM.setProperty("com.sun.xml.bind.xmlDeclaration", false);
+				// Escribiendo en un fichero
+				File XMLfile = new File("./xml/Plantacion.xml");
+				jaxbM.marshal(plantacion, XMLfile);
+				// Escribiendo por pantalla
+				jaxbM.marshal(plantacion, System.out);
 	}
 	@Override
 	public void marshallingProducto(Producto prod) throws JAXBException {
@@ -67,7 +72,7 @@ public class TestXML implements XMLManager{
 		Marshaller jaxbM = jaxbC.createMarshaller();
 		// Formateo bonito
 		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"producto.dtd\">");
+		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"Producto.dtd\">");
 		jaxbM.setProperty("com.sun.xml.bind.xmlDeclaration", false);
 		// Escribiendo en un fichero
 		File XMLfile = new File("./xml/Producto.xml");
@@ -77,21 +82,17 @@ public class TestXML implements XMLManager{
 	}
 	@Override
 	public void unmarshallingAnimal() throws JAXBException {
-		
-			// Creamos el JAXBContext
-			JAXBContext jaxbC = JAXBContext.newInstance(Animal.class);
-			// Creamos el JAXBMarshaller
-			Unmarshaller jaxbU = jaxbC.createUnmarshaller();
-			// Leyendo un fichero
-			File XMLfile = new File("./xml/Animal.xml");
-			// Creando el objeto
-			Animal animal = (Animal) jaxbU.unmarshal(XMLfile);
-			// Escribiendo por pantalla el objeto
-			System.out.println(animal);
-		
-			//LOGGER.warning("El fichero no existe debe hacer marshall primero");
-			//e.printStackTrace();
-		
+
+		// Creamos el JAXBContext
+		JAXBContext jaxbC = JAXBContext.newInstance(Animal.class);
+		// Creamos el JAXBMarshaller
+		Unmarshaller jaxbU = jaxbC.createUnmarshaller();
+		// Leyendo un fichero
+		File XMLfile = new File("./xml/Animal.xml");
+		// Creando el objeto
+		Animal animal = (Animal) jaxbU.unmarshal(XMLfile);
+		// Escribiendo por pantalla el objeto
+		System.out.println(animal);
 
 	}
 	@Override
@@ -107,9 +108,11 @@ public class TestXML implements XMLManager{
 		// Escribiendo por pantalla el objeto
 		System.out.println(plantacion);
 	}
+
+	
 	@Override
-	public  void xmlValido() {
-		File xmlFile = new File("./xml/Producto.xml");
+	public  void xmlValido(File xmlFile) {
+		
 		try {
 			DocumentBuilderFactory dBF = DocumentBuilderFactory.newInstance();
 			dBF.setValidating(true);
@@ -132,7 +135,22 @@ public class TestXML implements XMLManager{
 			System.out.println(xmlFile + " was not accesible!");
 			Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, ex);
 		}
+	}
+	@Override
+	public void TestXSLT() {
 
+		String sourcePath = "./xml/Animal.xml";
+		String xsltPath = "./xml/Animal.xslt";
+		String resultDir = "./xml/Animal.html";
+
+		TransformerFactory tFactory = TransformerFactory.newInstance();
+		try {
+			Transformer transformer = tFactory.newTransformer(new StreamSource(new File(xsltPath)));
+			transformer.transform(new StreamSource(new File(sourcePath)),new StreamResult(new File(resultDir)));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
+

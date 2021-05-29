@@ -1,5 +1,7 @@
 package db.interfaces;
 
+import java.io.File;
+
 import javax.xml.bind.JAXBException;
 
 import pojos.Animal;
@@ -13,7 +15,6 @@ public interface XMLManager{
 	void unmarshallingPlantacion() throws JAXBException;
 	void unmarshallingAnimal() throws JAXBException;
 	void marshallingPlantacion(Plantacion plantacion) throws JAXBException;
-	void xmlValido();
-
-
+	void TestXSLT();
+	void xmlValido(File xmlFile);
 }
