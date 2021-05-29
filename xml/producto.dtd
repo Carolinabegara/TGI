@@ -1,0 +1,11 @@
+<!ELEMENT producto (nombre,cantidad,tipo,unidades,precio,plantacion)> 
+<!ATTLIST producto id CDATA #REQUIRED>
+<!ELEMENT nombre (#PCDATA)> 
+<!ELEMENT cantidad (#PCDATA) > 
+<!ELEMENT tipo (#PCDATA)> 
+<!ELEMENT unidades (#PCDATA)>
+<!ELEMENT precio (#PCDATA) >  
+<!ELEMENT plantacion (ultimo_regado,hectareas)>
+<!ATTLIST plantacion id CDATA #REQUIRED>
+<!ELEMENT ultimo_regado (#PCDATA) >  
+<!ELEMENT hectareas (#PCDATA)>

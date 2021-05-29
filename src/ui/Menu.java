@@ -31,6 +31,7 @@ import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
+import pojos.Producto;
 import pojos.Rol;
 import pojos.Usuario;
 
@@ -40,7 +41,7 @@ public class Menu {
 	private static UsuariosManager userman = new JPAUsuariosManager();
 
 	private static XMLManager xmlman = new TestXML();
-
+	
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
@@ -125,6 +126,7 @@ public class Menu {
 				System.out.println("9. Marshalling plantacion");
 				System.out.println("10. Unmarshalling animal");
 				System.out.println("11. Unmarshalling plantacion");
+				System.out.println("12. Validar XML de producto (DTD)");
 				System.out.println("0. Salir");
 
 				try {
@@ -212,17 +214,24 @@ public class Menu {
 					break;
 				case 8:
 					Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));
-					xmlman.marshalling(animal);
+					xmlman.marshallingAnimal(animal);
 					break;
 				case 9:
 					Plantacion plantacion = new Plantacion(Date.valueOf("2020-06-12"),1003);
-					xmlman.marshalling(plantacion);
+					xmlman.marshallingPlantacion(plantacion);
 					break;
 				case 10:
 					xmlman.unmarshallingAnimal();
 					break;
 				case 11:
 					xmlman.unmarshallingPlantacion();
+					break;
+				case 12:
+					//Animal animal2 = new Animal();
+					Plantacion plantacion2 = new Plantacion(Date.valueOf("2021-05-20"),1003);
+					Producto producto = new Producto("Patatas",100,"Plantación","Kilos",1,null,plantacion2);
+					xmlman.marshallingProducto(producto);
+					xmlman.xmlValido();
 					break;
 				case 0:
 					break;
