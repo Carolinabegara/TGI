@@ -23,9 +23,9 @@ public class JDBCManager implements DBManager{
 	private final String eliminarUnEmpleado = "DELETE FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchEmpleados = "SELECT * FROM Empleados;";
 	private final String searchClientes = "SELECT * FROM Clientes;";
-	//private final String searchEmpleadoByNombre = "SELECT * FROM Empleados WHERE Nombre = ?;";
 	private final String searchUnEmpleado = "SELECT * FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchUnEmpleadoId = "SELECT * FROM Empleados WHERE Id = ?;";
+	private final String searchUnClienteDni = "SELECT * FROM Cliente WHERE DNI = ?;";
 	private final String actualizarNumeroTelefono = "UPDATE Empleados SET Telefono = ?;";
 	private final String insertarImagen = "UPDATE Empleados SET Foto = ? WHERE Id = ?;";
 	
@@ -218,7 +218,6 @@ public class JDBCManager implements DBManager{
 			prep.executeUpdate();
 			prep.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
 
@@ -393,7 +392,34 @@ public class JDBCManager implements DBManager{
 		return empleados;
 	}
 	
+	@Override
 	
+	public Cliente searchEmpleadoByDNI(String Dnicliente){
+		Cliente cliente = new Cliente();
+		try {
+			PreparedStatement prep = c.prepareStatement(searchUnClienteDni);
+			prep.setString(1, DniCliente);
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date fecha_nac = rs.getDate("Fech_Nac");
+				float sueldo = rs.getFloat("Sueldo");
+				
+				//Empleado empleado = new Empleado (id, nombre, telefono, direccion, DNI, fecha_nac, sueldo);
+				//LOGGER.fine("Empleado encontrado: " + empleado);
+			}
+			prep.close();
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+	
+		cliente(setId(id),setNombre(nombre),setTelefono(telefono),setDireccion,(direccion),setdNI(DNI),setfecha_Nac(fecha_nac), setsueldo(sueldo));
+		return cliente;
+	}
 	@Override
 	public boolean actualizarEmpleado(int idEmpleado) {
 		boolean existe = false;
@@ -412,11 +438,4 @@ public class JDBCManager implements DBManager{
 		}
 		return existe;
 	}
-
-	@Override
-	public void addCliente(Empleado empleado) {
-		// TODO Auto-generated method stub
-		
-	}
-
 }

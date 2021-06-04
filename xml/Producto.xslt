@@ -31,10 +31,6 @@
 							<td>
 								<xsl:value-of select="precio" />
 							</td>
-							<td>
-								<xsl:value-of select="plantacion" />
-							</td>
-
 						</tr>
 					</xsl:for-each>
 				</table>

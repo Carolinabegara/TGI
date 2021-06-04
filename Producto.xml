@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<producto id="0">
+    <nombre>Patatas</nombre>
+    <cantidad>100</cantidad>
+    <tipo>Plantación</tipo>
+    <unidades>Kilos</unidades>
+    <precio>1.0</precio>
+    <plantacion id="0">
+        <ultimo_regado>2021-05-20</ultimo_regado>
+        <hectareas>1003.0</hectareas>
+    </plantacion>
+</producto>

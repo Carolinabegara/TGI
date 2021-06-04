@@ -17,4 +17,6 @@ public interface XMLManager{
 	void marshallingPlantacion(Plantacion plantacion) throws JAXBException;
 	void generarXSLT(String sourcePath, String xsltPath, String resultDir);
 	void xmlValido(File xmlFile);
+	//PRUEBA
+	void marshallingProductoPrueba(Producto prod) throws JAXBException;
 }

@@ -41,6 +41,8 @@ public interface DBManager {
 
 	public void addImagen(Empleado empleado);
 
+	public int searchEmpleadoByDNI(String DniEmpleado);
+
 	
 
 	

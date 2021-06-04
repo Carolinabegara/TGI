@@ -229,10 +229,11 @@ public class Menu {
 					xmlman.marshallingPlantacion(plantacion);
 					break;
 				case 10:
-					//Animal animal2 = new Animal();
+					
 					Plantacion plantacion2 = new Plantacion(Date.valueOf("2021-05-20"),1003);
 					Producto producto = new Producto("Patatas",100,"Plantación","Kilos",1,null,plantacion2);
-					xmlman.marshallingProducto(producto);
+					xmlman.marshallingProductoPrueba(producto);
+					//xmlman.marshallingProducto(producto);
 				
 					break;
 				case 11:
@@ -683,6 +684,22 @@ public class Menu {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		}
+		
+//______________________________________Pruebas__________________________________________________________
+		private static void datosPrueba() {
+			String nombre = "Carolina";
+			int telefono = 681772631;
+			String direccion = "C/ Las Matas";
+			String dni = "43432819W";
+			//Atributos factura
+			String fecha = "20/05/2021";
+			float importe =13.30f;
+			Cliente cliente = new Cliente(nombre, telefono,direccion,dni);
+			dbman.addCliente(cliente);
+			int id = dbman.searchEmpleadoByDNI(dni)
+			
+			
 		}
 
 		/*
