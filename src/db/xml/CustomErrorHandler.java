@@ -13,17 +13,17 @@ public class CustomErrorHandler implements ErrorHandler{
 	}
 	@Override
 	public void error(SAXParseException exception) throws SAXException {
-		Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, exception);
+		Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, exception);
 		errorProduced = Boolean.TRUE;
 	}
 	@Override
 	public void fatalError(SAXParseException exception) throws SAXException {
-		Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, exception);
+		Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, exception);
 		errorProduced = Boolean.TRUE;
 	}
 	@Override
 	public void warning(SAXParseException exception) throws SAXException {
-		Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, exception);
+		Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, exception);
 		errorProduced = Boolean.TRUE;
 	}
 }

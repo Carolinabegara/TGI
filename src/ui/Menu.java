@@ -24,7 +24,7 @@ import db.interfaces.UsuariosManager;
 import db.interfaces.XMLManager;
 import db.jdbc.JDBCManager;
 import db.jpa.JPAUsuariosManager;
-import db.xml.TestXML;
+import db.xml.XMLFicherosManager;
 import logging.MyLogger;
 import pojos.Animal;
 import pojos.Cliente;
@@ -40,7 +40,7 @@ public class Menu {
 	private static DBManager dbman = new JDBCManager();
 	private static UsuariosManager userman = new JPAUsuariosManager();
 
-	private static XMLManager xmlman = new TestXML();
+	private static XMLManager xmlman = new XMLFicherosManager();
 	
 	private static BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
 	private final static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -128,6 +128,13 @@ public class Menu {
 				System.out.println("11. Unmarshalling animal");
 				System.out.println("12. Unmarshalling plantacion");
 				System.out.println("13. Validar XML de producto (DTD)");
+				System.out.println("14. Validar XML de animal (DTD)");
+				System.out.println("15. Validar XML de plantacion (DTD)");
+				System.out.println("16. Generar HTML de producto");
+				System.out.println("17. Generar HTML de animal");
+				System.out.println("18. Generar HTML de plantacion");
+				
+				
 				System.out.println("0. Salir");
 
 				try {
@@ -246,6 +253,24 @@ public class Menu {
 				case 15:
 					File xmlFilePlantacion = new File("./xml/Plantacion.xml");
 					xmlman.xmlValido(xmlFilePlantacion);
+					break;
+				case 16:
+					String sourcePathProd = "./xml/Producto.xml";
+					String xsltPathProd = "./xml/Producto.xslt";
+					String resultDirProd = "./xml/Producto.html";
+					xmlman.generarXSLT(sourcePathProd, xsltPathProd, resultDirProd);
+					break;
+				case 17:
+					String sourcePathAnim = "./xml/Animal.xml";
+					String xsltPathAnim = "./xml/Animal.xslt";
+					String resultDirAnim = "./xml/Animal.html";
+					xmlman.generarXSLT(sourcePathAnim, xsltPathAnim, resultDirAnim);
+					break;
+				case 18:
+					String sourcePathPlant = "./xml/Plantacion.xml";
+					String xsltPathPlant = "./xml/Plantacion.xslt";
+					String resultDirPlant = "./xml/Plantacion.html";
+					xmlman.generarXSLT(sourcePathPlant, xsltPathPlant, resultDirPlant);
 					break;
 					
 				case 0:
@@ -659,12 +684,6 @@ public class Menu {
 				e.printStackTrace();
 			}
 		}
-
-
-
-
-
-
 
 		/*
 		 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/

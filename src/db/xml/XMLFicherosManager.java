@@ -28,7 +28,7 @@ import pojos.Plantacion;
 import pojos.Producto;
 
 
-public class TestXML implements XMLManager{
+public class XMLFicherosManager implements XMLManager{
 	
 	@Override
 	public void marshallingAnimal(Animal animal) throws JAXBException {
@@ -127,21 +127,17 @@ public class TestXML implements XMLManager{
 			}
 		} catch (ParserConfigurationException ex) {
 			System.out.println(xmlFile + " error while parsing!");
-			Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SAXException ex) {
 			System.out.println(xmlFile + " was not well-formed!");
-			Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (IOException ex) {
 			System.out.println(xmlFile + " was not accesible!");
-			Logger.getLogger(CheckDTD.class.getName()).log(Level.SEVERE, null, ex);
+			Logger.getLogger(XMLFicherosManager.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
 	@Override
-	public void TestXSLT() {
-
-		String sourcePath = "./xml/Animal.xml";
-		String xsltPath = "./xml/Animal.xslt";
-		String resultDir = "./xml/Animal.html";
+	public void generarXSLT(String sourcePath, String xsltPath, String resultDir) {
 
 		TransformerFactory tFactory = TransformerFactory.newInstance();
 		try {
@@ -151,6 +147,4 @@ public class TestXML implements XMLManager{
 			e.printStackTrace();
 		}
 	}
-
 }
-

@@ -1,5 +1,5 @@
 
-<!DOCTYPE producto SYSTEM "Animal.dtd">
+<!DOCTYPE animal SYSTEM "Animal.dtd">
 <animal id="0">
     <especie>Vaca</especie>
     <fecha_Nac>2020-06-12</fecha_Nac>
