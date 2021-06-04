@@ -394,11 +394,12 @@ public class JDBCManager implements DBManager{
 	
 	@Override
 	
-	public Cliente searchEmpleadoByDNI(String Dnicliente){
-		Cliente cliente = new Cliente();
+	public List<Cliente> searchClienteByDNI(String Dnicliente){
+		
+		List<Cliente> clientes = new ArrayList<Cliente>();
 		try {
-			PreparedStatement prep = c.prepareStatement(searchUnClienteDni);
-			prep.setString(1, DniCliente);
+			PreparedStatement prep = c.prepareStatement("SELECT * FROM Cliente WHERE DNI = ?;");
+			prep.setString(1, Dnicliente);
 			ResultSet rs = prep.executeQuery();
 			while(rs.next()){
 				int id = rs.getInt("Id");
@@ -406,19 +407,17 @@ public class JDBCManager implements DBManager{
 				int telefono = rs.getInt("Telefono");
 				String direccion = rs.getString("Direccion");
 				String DNI = rs.getString("DNI");
-				Date fecha_nac = rs.getDate("Fech_Nac");
-				float sueldo = rs.getFloat("Sueldo");
-				
-				//Empleado empleado = new Empleado (id, nombre, telefono, direccion, DNI, fecha_nac, sueldo);
-				//LOGGER.fine("Empleado encontrado: " + empleado);
+				Cliente cliente = new Cliente (id, nombre, telefono, direccion, DNI);
+				clientes.add(cliente);
+				LOGGER.fine("Empleado encontrados: " + cliente);
 			}
 			prep.close();
 		} catch (SQLException e) {
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
-	
-		cliente(setId(id),setNombre(nombre),setTelefono(telefono),setDireccion,(direccion),setdNI(DNI),setfecha_Nac(fecha_nac), setsueldo(sueldo));
-		return cliente;
+
+		}
+		return clientes;	
 	}
 	@Override
 	public boolean actualizarEmpleado(int idEmpleado) {

@@ -37,11 +37,11 @@ public interface DBManager {
 
 	public boolean actualizarEmpleado(int idEmpleado);
 
-	public void addCliente(Empleado empleado);
+	//public void addCliente(Empleado empleado);
 
 	public void addImagen(Empleado empleado);
-
-	public int searchEmpleadoByDNI(String DniEmpleado);
+	
+	public List<Cliente> searchClienteByDNI(String Dnicliente);
 
 	
 

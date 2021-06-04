@@ -697,7 +697,7 @@ public class Menu {
 			float importe =13.30f;
 			Cliente cliente = new Cliente(nombre, telefono,direccion,dni);
 			dbman.addCliente(cliente);
-			int id = dbman.searchEmpleadoByDNI(dni)
+			Cliente cliente1 = dbman.searchClienteByDNI(dni);
 			
 			
 		}
