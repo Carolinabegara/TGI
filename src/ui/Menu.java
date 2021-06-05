@@ -61,6 +61,14 @@ public class Menu {
 	private final static String[] FACTURAS_FECHAS = {"2021-06-05","2017-04-22","2018-09-24","2020-12-23","2019-04-17","2021-05-23","2021-03-27","2020-01-06","2021-02-30","2019-11-25","2019-06-06"};
 	private final static Float[] FACTURAS_IMPORTES = {200.54f,30.0f,50.65f,10.50f,5.45f,17.20f,40.45f,1.50f,34.8f,25.5f,350.67f,550.3f};
 	private final static Boolean[] FACTURAS_METODO_PAGO = {false,true};
+	
+	private final static String[] ANIMALES_ESPECIE = {"Vaca","Cerdo","Gallina","Oveja"};
+	private final static String[] ANIMALES_PESO_ALTO = {"720Kg","700Kg","650Kg","499Kg","430Kg","500Kg"};
+	private final static String[] ANIMALES_PESO_MEDIO = {"100Kg","150Kg","200Kg","90Kg","120Kg"};
+	private final static String[] ANIMALES_PESO_BAJO = {"5.45Kg","4.5Kg","3.67Kg","2.9Kg","4.67Kg","1.89Kg","5kg"};
+	private final static String[] ANIMALES_FECHA = {"2018-09-20","2019-03-24","2019-07-08","2020-01-02","2016-09-03","2021-01-01","2015-12-12","2019-05-06"};
+	
+	private final static Integer[] PRODUCTOS_CANTIDAD = {1,2,3,20,50,100,300,11,30,70,4,6,40};
 
 	public static void main(String[] args)  throws JAXBException{
 
@@ -726,22 +734,74 @@ public class Menu {
 		dbman.addFacturaP(factura);
 	}
 	private static void tablaProductos() {
-		//datos de ANIMAL
 
-		String especie = "Vaca";
-		String peso = "843 Kg";
-		LocalDate fecha_Nac = LocalDate.parse("2020-06-05");
-		Animal animal = new Animal(especie, peso, Date.valueOf(fecha_Nac));
-		dbman.addAnimal(animal);
-
-		//datos de PRODUCTO
-		String nombreProducto = "Leche";
-		int cantidad = 4;
+		int randomKind =(int) Math.floor(Math.random()*ANIMALES_ESPECIE.length);
+		int randomDate =(int) Math.floor(Math.random()*ANIMALES_FECHA.length);
+		LocalDate fecha = LocalDate.parse(ANIMALES_FECHA[randomDate], formatter);
+		int randomQuantity =(int) Math.floor(Math.random()*PRODUCTOS_CANTIDAD.length);
 		String tipo = "Animal";
-		String unidades = "Litros";
-		float precio = 2.4f;
-		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio, animal);
-		dbman.addProductoP(producto);
+		
+		if(ANIMALES_ESPECIE[randomKind].equals("Vaca")) {
+			
+			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_ALTO.length);
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_ALTO[randomWeight], Date.valueOf(fecha));
+			dbman.addAnimal(animal);
+			//datos de PRODUCTO
+			String nombreProducto = "Leche";
+			
+			String unidades = "Litros";
+			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
+			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+			dbman.addProductoP(producto);
+			
+		}else if(ANIMALES_ESPECIE[randomKind].equals("Gallina")){
+			
+			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_BAJO.length);
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_BAJO[randomWeight], Date.valueOf(fecha));
+			dbman.addAnimal(animal);
+			//datos de PRODUCTO
+			String nombreProducto = "Huevos";
+			String unidades = "Unidades";
+			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
+			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+			dbman.addProductoP(producto);
+			
+		}else {//Puede ser un Cerdo o una oveja que más o menos tienen el mismo peso
+			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_MEDIO.length);
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_MEDIO[randomWeight], Date.valueOf(fecha));
+			dbman.addAnimal(animal);
+			if(ANIMALES_ESPECIE[randomKind].equals("Cerdo")) {
+
+				//datos de PRODUCTO
+				String nombreProducto = "Jamon serrano";
+				String unidades = "Kilos";
+				float precio = (float)(15*PRODUCTOS_CANTIDAD[randomQuantity]);
+				Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+				dbman.addProductoP(producto);
+				
+			}else {//OVEJA
+				String[] PRODUCTOS_OVEJA = {"Leche","Lana"};
+				int randomName = (int) Math.floor(Math.random()*PRODUCTOS_OVEJA.length);
+				
+				if(PRODUCTOS_OVEJA[randomName].equals("Leche")) {
+					String unidades = "Litros";
+					float precio = (float)(4*PRODUCTOS_CANTIDAD[randomQuantity]);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+					dbman.addProductoP(producto);
+					
+				}else {//lana
+					
+					String unidades = "Kilos";
+					float precio = (float)(2.75*PRODUCTOS_CANTIDAD[randomQuantity]);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+					dbman.addProductoP(producto);
+				}
+				
+			}
+		}
+
+
+		
 	}
 	private static void tablaPlantaciones() {
 		//datos Plantacion
