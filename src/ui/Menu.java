@@ -57,6 +57,10 @@ public class Menu {
 	private final static int[] CLIENTES_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
 	private final static String[] CLIENTES_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
 	private final static String[] CLIENTES_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
+	
+	private final static String[] FACTURAS_FECHAS = {"2021-06-05","2017-04-22","2018-09-24","2020-12-23","2019-04-17","2021-05-23","2021-03-27","2020-01-06","2021-02-30","2019-11-25","2019-06-06"};
+	private final static Float[] FACTURAS_IMPORTES = {200.54f,30.0f,50.65f,10.50f,5.45f,17.20f,40.45f,1.50f,34.8f,25.5f,350.67f,550.3f};
+	private final static Boolean[] FACTURAS_METODO_PAGO = {false,true};
 
 	public static void main(String[] args)  throws JAXBException{
 
@@ -699,20 +703,26 @@ public class Menu {
 
 		//datos de CLIENTE
 
-		String nombreCliente = "Carolina";
-		int telefono = 681772631;
-		String direccion = "C/ Las Matas";
-		String dni = "43432819W";
-		Cliente cliente = new Cliente(nombreCliente, telefono,direccion,dni);
+		int randomName =(int) Math.floor(Math.random()*CLIENTES_NOMBRES.length);
+		System.out.println("randomName: "+ randomName);
+		int randomPhone = (int) Math.floor(Math.random()*CLIENTES_TELEFONOS.length);
+		System.out.println("randomPhone: "+ randomPhone);
+		int randomAddress = (int) Math.floor(Math.random()*CLIENTES_DIRECCIONES.length);
+		System.out.println("randomAddress: "+ randomAddress);
+		int randomDni = (int) Math.floor(Math.random()*CLIENTES_DNI.length);
+		System.out.println("randomDni: "+ randomDni);
+		
+		Cliente cliente = new Cliente(CLIENTES_NOMBRES[randomName],CLIENTES_TELEFONOS[randomPhone],CLIENTES_DIRECCIONES[randomAddress],CLIENTES_DNI[randomDni]);
 		dbman.addCliente(cliente);
 
 
 		//datos de FACTURA
-
-		LocalDate fecha = LocalDate.parse("2021-06-05");
-		Float importe = 50.87f;
-		boolean metodo_de_pago = false;//si es en efectivo false si es con tarjeta true
-		Factura factura = new Factura(Date.valueOf(fecha),importe,metodo_de_pago, cliente);
+		int randomDate =(int) Math.floor(Math.random()*FACTURAS_FECHAS.length);
+		int randomAmount = (int) Math.floor(Math.random()*FACTURAS_IMPORTES.length);
+		int randomPaymentMethod = (int) Math.floor(Math.random()*FACTURAS_METODO_PAGO.length);
+		
+		LocalDate fecha = LocalDate.parse(FACTURAS_FECHAS[randomDate], formatter);
+		Factura factura = new Factura(Date.valueOf(fecha),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod], cliente);
 		dbman.addFacturaP(factura);
 	}
 	private static void tablaProductos() {
