@@ -51,6 +51,10 @@ public interface DBManager {
 	public void addAnimal(Animal animal);
 	public int searchAnimal(Animal animal);
 	public void addProductoP(Producto producto);
+	public void addProductoConPlantacion(Producto producto);
+	public int searchPlantacion(Plantacion plantacion);
 
-	
+	public List<Animal> searchAnimales();
+
+	public void addAnimalPlantacion(Empleado empleadoId,Animal animalId);
 }

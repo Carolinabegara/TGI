@@ -129,6 +129,14 @@ public class Producto {
 		this.animal = animal;
 	}
 
+	public Plantacion getPlantacion() {
+		return plantacion;
+	}
+
+	public void setPlantacion(Plantacion plantacion) {
+		this.plantacion = plantacion;
+	}
+
 	@Override
 	public String toString() {
 		return "Producto [id=" + id + ", nombre=" + nombre + ", cantidad=" + cantidad + ", tipo=" + tipo + ", unidades="

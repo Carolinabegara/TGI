@@ -62,7 +62,7 @@ public class JDBCManager implements DBManager{
 					+ "DNI TEXT NOT NULL,"
 					+ "Fech_Nac DATE NOT NULL,"
 					+ "Sueldo REAL NOT NULL,"
-					+ "Foto BLOB)");
+					+ "Foto BLOB);");
 			stmt.close();
 			Statement stmt1 = c.createStatement();
 			stmt1.executeUpdate("CREATE TABLE IF NOT EXISTS Clientes("
@@ -70,7 +70,7 @@ public class JDBCManager implements DBManager{
 					+ "Nombre TEXT NOT NULL,"
 					+ "Telefono INTEGER,"
 					+ "Direccion TEXT,"
-					+ "DNI TEXT)");
+					+ "DNI TEXT);");
 			stmt1.close();
 			Statement stmt2 = c.createStatement();
 			stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("
@@ -80,7 +80,8 @@ public class JDBCManager implements DBManager{
 					+ "Cantidad INTEGER NOT NULL,"
 					+ "Precio REAL NOT NULL, "
 					+ "Unidades TEXT NOT NULL,"
-					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE,"
+					+ "PlantacionId INTEGER REFERENCES Plantaciones ON DELETE CASCADE);");
 			stmt2.close();
 			Statement stmt3 = c.createStatement();
 			stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
@@ -110,7 +111,6 @@ public class JDBCManager implements DBManager{
 			stmt6.executeUpdate( "CREATE TABLE IF NOT EXISTS Plantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Hectareas REAL NOT NULL,"
-					+ "ProductoId INTEGER REFERENCES Productos ON DELETE CASCADE,"
 					+ "HoraRegado TEXT NOT NULL);");
 			stmt6.close();
 
@@ -189,44 +189,37 @@ public class JDBCManager implements DBManager{
 		try {
 
 			PreparedStatement prep = c.prepareStatement("INSERT INTO Facturas (Fecha, Importe, MetodoPago, ClienteId) VALUES (?,?,?,?);");
-			
+
 			prep.setDate(1, factura.getFecha());
 			prep.setFloat(2, factura.getImporte());
 			prep.setBoolean(3, factura.getMetodo_de_pago());
 			Cliente cliente = factura.getCliente();
 			prep.setInt(4, searchClienteByDNI(cliente.getDni()));//id del cliente
-			
+
 			prep.executeUpdate();
 			prep.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}			
 
 	}
 	@Override
-/*		stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("
-					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "Nombre TEXT NOT NULL,"
-					+ "Tipo TEXT NOT NULL,"
-					+ "Cantidad INTEGER NOT NULL,"
-					+ "Precio REAL NOT NULL, "
-					+ "Unidades TEXT NOT NULL,"
-					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");*/
+
 	public void addAnimal(Animal animal) {
 
 		try {
 
 			PreparedStatement prep = c.prepareStatement("INSERT INTO Animales (Especie, Fech_Nac, Peso) VALUES (?,?,?);");
-			
+
 			prep.setString(1, animal.getEspecie());
-		    prep.setDate(2, animal. getFecha_Nac());
+			prep.setDate(2, animal. getFecha_Nac());
 			prep.setString(3, animal.getPeso());
 
-			
+
 			prep.executeUpdate();
 			prep.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}			
@@ -239,10 +232,10 @@ public class JDBCManager implements DBManager{
 		try {
 			PreparedStatement prep = c.prepareStatement( "INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades,AnimalId) VALUES (?,?,?,?,?,?);");
 			prep.setString(1, producto.getNombre());
-			prep.setInt(2, producto.getCantidad());
-			prep.setString(3, producto.getTipo());
-			prep.setString(4, producto.getUnidades());
-			prep.setFloat(5, producto.getPrecio());
+			prep.setString(2, producto.getTipo());
+			prep.setInt(3, producto.getCantidad());
+			prep.setFloat(4, producto.getPrecio());
+			prep.setString(5, producto.getUnidades());
 			prep.setInt(6, searchAnimal(producto.getAnimal()));
 			prep.executeUpdate();
 			prep.close();
@@ -250,6 +243,41 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}			
 
+	}
+	@Override
+	public void addProductoConPlantacion(Producto producto) {
+
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades, PlantacionId) VALUES (?,?,?,?,?,?);");
+			prep.setString(1, producto.getNombre());
+			prep.setString(2, producto.getTipo());
+			prep.setInt(3, producto.getCantidad());
+			prep.setFloat(4, producto.getPrecio());
+			prep.setString(5, producto.getUnidades());
+			prep.setInt(6, searchPlantacion(producto.getPlantacion()));
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+
+	}
+	@Override
+	public int searchPlantacion(Plantacion plantacion){
+		int id = -1;
+		try {
+			PreparedStatement prep = c.prepareStatement("SELECT Id FROM Plantaciones WHERE Hectareas = ? AND HoraRegado = ?;");
+			prep.setFloat(1, plantacion.getHectareas());
+			prep.setDate(2, plantacion.getUltimo_regado());
+
+			ResultSet rs = prep.executeQuery();
+			id = rs.getInt("Id");
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+
+		}
+		return id;	
 	}
 	@Override
 
@@ -266,7 +294,6 @@ public class JDBCManager implements DBManager{
 			prep.executeUpdate();
 			prep.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
 
@@ -304,6 +331,25 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
+	/*	stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "EmpleadoId INTEGER REFERENCES Empleados ON DELETE CASCADE,"
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");
+			stmt8.close();*/
+	@Override
+	public void addAnimalPlantacion(Empleado empleado,Animal animal) {
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO EmpleadosAnimales (EmpleadoId, AnimalId) VALUES (?,?);");
+			prep.setInt(1, empleado.getId());
+			prep.setInt(2, animal.getId());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
 	@Override
 	public void addImagen(Empleado empleado) {
 		try {
@@ -362,27 +408,17 @@ public class JDBCManager implements DBManager{
 
 	@Override
 	public List<Cliente> searchClientes() {
-		/*Iniciamos nuestro ArrayList que va a contener todos los empleados que vamos a ejecutar en nuestra búsqueda. 
-		Inicialmente va a estar vacía*/
 		List<Cliente> clientes= new ArrayList<Cliente>();
-
-		/*En este caso el resultado es un ResultSet (que contiene la información que queremos)*/
 		try {
 			Statement stmt = c.createStatement();
-			//La Query nos va a devolver el ResultSet va a tener 0 o más elementos con los resultados que ha devuelvo esa query correspondiente.
 			ResultSet rs = stmt.executeQuery(searchClientes);
-			/*Recorremos el resultSet, es decir, mientras haya elementos nos devuelve un true y 
-			 podemos obtener cada uno de los elementos de las columnas*/
 			while(rs.next()){
-				/*Creamos un objeto empleado rellenando los datos obtenidos en la base de datos para que java lo entienda*/
 				int id = rs.getInt("Id");
 				String nombre = rs.getString("Nombre");
 				int telefono = rs.getInt("Telefono");
 				String direccion = rs.getString("Direccion");
 				String DNI = rs.getString("DNI");
-				//PREGUNTA!!! Tenemos que crear un constructor con las relaciones (factura) relación 1 cliente muchas facturas???
 				Cliente cliente = new Cliente(id, nombre, telefono, direccion, DNI);
-				//Añadimos un cliente a nuestra lista
 				clientes.add(cliente);
 				LOGGER.fine("Cliente encontrado: "+ cliente);
 			}
@@ -393,8 +429,31 @@ public class JDBCManager implements DBManager{
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
 		}
-		//Vamos a devolver el ArrayList
 		return clientes;
+	}
+	@Override
+	public List<Animal> searchAnimales() {
+		List<Animal> animales= new ArrayList<Animal>();
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Animales;");
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String especie = rs.getString("Especie");
+				Date fech_Nac = rs.getDate("Fech_Nac");
+				String peso = rs.getString("Peso");
+				Animal animal = new Animal(id, especie,peso, fech_Nac);
+				animales.add(animal);
+				LOGGER.fine("Animal encontrado: "+ animal);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return animales;
 	}
 	@Override
 	public boolean eliminarEmpleado(String nombreEmpleado) {
@@ -501,6 +560,7 @@ public class JDBCManager implements DBManager{
 
 			ResultSet rs = prep.executeQuery();
 			id = rs.getInt("Id");
+			prep.close();
 		} catch (SQLException e) {
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
@@ -508,6 +568,7 @@ public class JDBCManager implements DBManager{
 		}
 		return id;	
 	}
+
 	@Override
 	public boolean actualizarEmpleado(int idEmpleado) {
 		boolean existe = false;

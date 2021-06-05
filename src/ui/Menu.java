@@ -106,6 +106,9 @@ public class Menu {
 			case 3:
 				tablaFacturas();
 				tablaProductos();
+				tablaPlantaciones();
+				generarEmpleados();
+				tablaEmpleadoAnimal();
 				break;
 			case 0:
 				break;
@@ -734,9 +737,34 @@ public class Menu {
 		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio, animal);
 		dbman.addProductoP(producto);
 	}
+	private static void tablaPlantaciones() {
+		//datos Plantacion
+		LocalDate ultimo_regado = LocalDate.parse("2021-06-05");
+		float hectareas = 2000.58f;
+		Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
+		dbman.addPlantacion(plantacion);
+		//datos Producto
+		String nombreProducto = "Maiz";
+		int cantidad = 1000;
+		String tipo = "Plantacion";
+		String unidades = "Kilos";
+		float precio = 4500.89f;
+		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio, null,plantacion);
+		dbman.addProductoConPlantacion(producto);
 
+		
+	}
 
+	private static void tablaEmpleadoAnimal() {
+		List<Empleado> empleados = dbman.searchEmpleados();//miro cuantos empleados tengo en mi base de datos
+		int empleadoId = (int) Math.floor(Math.random()*empleados.size());//genero un id aleatorio entre 1 y el numero de empleados que tenga 
+																				//para obtener un empleado aleatorio
 
+		List<Animal> animales = dbman.searchAnimales();
+		int animalId = (int) Math.floor(Math.random()*animales.size());
+		dbman.addAnimalPlantacion(empleados.get(empleadoId),animales.get(animalId));
+
+	}
 
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
