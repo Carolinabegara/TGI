@@ -31,14 +31,8 @@ import db.jpa.JPAUsuariosManager;
 import db.xml.SQLDateAdapter;
 import db.xml.XMLFicherosManager;
 import logging.MyLogger;
-import pojos.Animal;
-import pojos.Cliente;
-import pojos.Empleado;
-import pojos.Factura;
-import pojos.Plantacion;
-import pojos.Producto;
-import pojos.Rol;
-import pojos.Usuario;
+import pojos.*;
+
 
 public class Menu {
 	final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -109,6 +103,8 @@ public class Menu {
 				tablaPlantaciones();
 				generarEmpleados();
 				tablaEmpleadoAnimal();
+				tablaEmpleadoPlantaciones();
+				tablaFacturasProductos();
 				break;
 			case 0:
 				break;
@@ -762,7 +758,28 @@ public class Menu {
 
 		List<Animal> animales = dbman.searchAnimales();
 		int animalId = (int) Math.floor(Math.random()*animales.size());
-		dbman.addAnimalPlantacion(empleados.get(empleadoId),animales.get(animalId));
+		dbman.addEmpleadoAnimal(empleados.get(empleadoId),animales.get(animalId));
+
+	}
+
+	private static void tablaEmpleadoPlantaciones() {
+		List<Empleado> empleados = dbman.searchEmpleados();
+		int empleadoId = (int) Math.floor(Math.random()*empleados.size());
+
+		List<Plantacion> plantaciones = dbman.searchPlantaciones();
+		int plantacionId = (int) Math.floor(Math.random()*plantaciones.size());
+
+		dbman.addEmpleadoPlantacion(empleados.get(empleadoId),plantaciones.get(plantacionId));
+
+	}
+	private static void tablaFacturasProductos() {
+		List<Factura> facturas = dbman.searchFacturas();
+		int facturaId = (int) Math.floor(Math.random()*facturas.size());
+
+		List<Producto> productos = dbman.searchProductos();
+		int productoId = (int) Math.floor(Math.random()*productos.size());
+
+		dbman.addFacturasProductos(facturas.get(facturaId),productos.get(productoId));
 
 	}
 

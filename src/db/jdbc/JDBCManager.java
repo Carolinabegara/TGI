@@ -4,6 +4,11 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+
 import db.interfaces.DBManager;
 import pojos.*;
 
@@ -111,7 +116,7 @@ public class JDBCManager implements DBManager{
 			stmt6.executeUpdate( "CREATE TABLE IF NOT EXISTS Plantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Hectareas REAL NOT NULL,"
-					+ "HoraRegado TEXT NOT NULL);");
+					+ "HoraRegado DATE NOT NULL);");
 			stmt6.close();
 
 			Statement stmt7 = c.createStatement();
@@ -331,13 +336,9 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
-	/*	stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
-					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "EmpleadoId INTEGER REFERENCES Empleados ON DELETE CASCADE,"
-					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");
-			stmt8.close();*/
+
 	@Override
-	public void addAnimalPlantacion(Empleado empleado,Animal animal) {
+	public void addEmpleadoAnimal(Empleado empleado,Animal animal) {
 		try {
 			PreparedStatement prep = c.prepareStatement( "INSERT INTO EmpleadosAnimales (EmpleadoId, AnimalId) VALUES (?,?);");
 			prep.setInt(1, empleado.getId());
@@ -348,8 +349,31 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}
 	}
+	@Override
+	public void addFacturasProductos(Factura factura,Producto producto) {
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO FacturasProductos (FacturaId, ProductoId) VALUES (?,?);");
+			prep.setInt(1, factura.getId());
+			prep.setInt(2, producto.getId());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	
-	
+	@Override
+	public void addEmpleadoPlantacion(Empleado empleado,Plantacion plantacion) {
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO EmpleadosPlantaciones (EmpleadoId, PlantacionId) VALUES (?,?);");
+			prep.setInt(1, empleado.getId());
+			prep.setInt(2, plantacion.getId());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
 	@Override
 	public void addImagen(Empleado empleado) {
 		try {
@@ -430,6 +454,131 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}
 		return clientes;
+	}
+
+	@Override
+	public List<Plantacion> searchPlantaciones() {
+		List<Plantacion> plantaciones= new ArrayList<Plantacion>();
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Plantaciones;");
+
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				float hectareas = rs.getFloat("Hectareas");
+				Date ultimo_regado = rs.getDate("HoraRegado");
+				
+				Plantacion plantacion = new Plantacion(id,ultimo_regado, hectareas);
+				plantaciones.add(plantacion);
+				LOGGER.fine("Plantacion encontrada: "+ plantacion);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return plantaciones;
+	}
+	
+	/*stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "Fecha DATE NOT NULL,"
+					+ "Importe REAL NOT NULL,"
+					+ "MetodoPago TEXT NOT NULL,"
+					+ "ClienteId INTEGER REFERENCES Clientes ON DELETE CASCADE);");*/
+	/*private int id;
+	
+
+	private Date fecha;
+	@XmlElement
+	private Float importe;
+	@XmlElement
+	private boolean metodo_de_pago;
+	
+
+	@XmlTransient
+	private Cliente cliente;*/
+	
+	@Override
+	public List<Factura> searchFacturas() {
+		List<Factura> facturas= new ArrayList<Factura>();
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Facturas;");
+
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				Date fecha = rs.getDate("Fecha");
+				float importe = rs.getFloat("Importe");
+				boolean metodo_de_pago = rs.getBoolean("MetodoPago");
+				Factura factura = new Factura(id,fecha,  importe, metodo_de_pago);
+				facturas.add(factura);
+				LOGGER.fine("Factura encontrada: "+ factura);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return facturas;
+	}
+	/*		stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "Nombre TEXT NOT NULL,"
+					+ "Tipo TEXT NOT NULL,"
+					+ "Cantidad INTEGER NOT NULL,"
+					+ "Precio REAL NOT NULL, "
+					+ "Unidades TEXT NOT NULL,"
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE,"
+					+ "PlantacionId INTEGER REFERENCES Plantaciones ON DELETE CASCADE);");*/
+	/*	@XmlAttribute
+	private int id;
+	@XmlElement
+	private String nombre;
+	@XmlElement
+	private int cantidad;
+	@XmlElement
+	private String tipo;
+	@XmlElement
+	private String unidades;
+	@XmlElement
+	private float precio;
+	@XmlTransient
+	private List<Factura> facturas;
+	@XmlElement
+	private Animal animal;
+	@XmlElement
+	private Plantacion plantacion;*/
+	@Override
+	public List<Producto> searchProductos() {
+		List<Producto> productos= new ArrayList<Producto>();
+		try {
+			Statement stmt = c.createStatement();
+			ResultSet rs = stmt.executeQuery("SELECT * FROM Productos;");
+
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				String tipo = rs.getString("Tipo");
+				int cantidad = rs.getInt("Cantidad");
+				float precio = rs.getFloat("Precio");
+				String unidades = rs.getString("Unidades");
+				Producto producto = new Producto(id, nombre,cantidad, tipo, unidades, precio);
+				productos.add(producto);
+				LOGGER.fine("Producto encontrado: "+ producto);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return productos;
 	}
 	@Override
 	public List<Animal> searchAnimales() {
