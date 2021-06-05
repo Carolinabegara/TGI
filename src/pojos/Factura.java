@@ -18,6 +18,7 @@ public class Factura {
 	@XmlAttribute
 	private int id;
 	
+
 	private Date fecha;
 	@XmlElement
 	private Float importe;
@@ -52,7 +53,7 @@ public class Factura {
 	}
 	
 	
-	//PREGUNTAR!! La lista hay que meterla por parámetros o se crea. 
+ 
 	public Factura(int id, Date fecha, Float importe, boolean metodo_de_pago, Empleado empleado, Cliente cliente) {
 		super();
 		this.id = id;
@@ -63,7 +64,14 @@ public class Factura {
 		this.cliente = cliente;
 		this.productos = new ArrayList<>();
 	}
-
+	public Factura(Date fecha, Float importe, boolean metodo_de_pago,Cliente cliente) {
+		super();
+		this.fecha = fecha;
+		this.importe = importe;
+		this.metodo_de_pago = metodo_de_pago;
+		this.cliente = cliente;
+		this.productos = new ArrayList<>();
+	}
 	public int getId() {
 		return id;
 	}
@@ -94,6 +102,22 @@ public class Factura {
 
 	public void setMetodo_de_pago(boolean metodo_de_pago) {
 		this.metodo_de_pago = metodo_de_pago;
+	}
+	public List<Producto> getProductos() {
+		return productos;
+	}
+
+	public void setProductos(List<Producto> productos) {
+		this.productos = productos;
+	}
+
+
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
 	}
 
 	@Override

@@ -2,6 +2,7 @@ package db.interfaces;
 
 import java.util.List;
 
+import pojos.Producto;
 import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
@@ -41,8 +42,10 @@ public interface DBManager {
 
 	public void addImagen(Empleado empleado);
 	
-	public List<Cliente> searchClienteByDNI(String Dnicliente);
-
+	//public List<Cliente> searchClienteByDNI(String Dnicliente);
+	public int searchClienteByDNI(String Dnicliente);
+	public void addProducto(Producto producto);
+	public void addFacturaP(Factura factura);
 	
 
 	

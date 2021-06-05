@@ -9,6 +9,7 @@ import pojos.Cliente;
 import pojos.Empleado;
 import pojos.Factura;
 import pojos.Plantacion;
+import pojos.Producto;
 
 import java.io.IOException;
 
@@ -28,9 +29,9 @@ public class JDBCManager implements DBManager{
 	private final String searchUnClienteDni = "SELECT * FROM Cliente WHERE DNI = ?;";
 	private final String actualizarNumeroTelefono = "UPDATE Empleados SET Telefono = ?;";
 	private final String insertarImagen = "UPDATE Empleados SET Foto = ? WHERE Id = ?;";
-	
-	
-	
+
+
+
 	@Override
 	public void connect() {
 		try {
@@ -82,7 +83,7 @@ public class JDBCManager implements DBManager{
 					+ "Cantidad INTEGER NOT NULL,"
 					+ "Precio REAL NOT NULL, "
 					+ "Unidades TEXT NOT NULL,"
-					+ "AnimalId INTEGER NOT NULL REFERENCES Animales ON DELETE CASCADE);");
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");
 			stmt2.close();
 			Statement stmt3 = c.createStatement();
 			stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
@@ -90,14 +91,13 @@ public class JDBCManager implements DBManager{
 					+ "Fecha DATE NOT NULL,"
 					+ "Importe REAL NOT NULL,"
 					+ "MetodoPago TEXT NOT NULL,"
-					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes ON DELETE CASCADE,"
-					+ "ProductoId INTEGER NOT NULL REFERENCES Productos ON DELETE CASCADE);");
+					+ "ClienteId INTEGER REFERENCES Clientes ON DELETE CASCADE);");
 			stmt3.close();
 			Statement stmt4 = c.createStatement();
 			stmt4.executeUpdate("CREATE TABLE IF NOT EXISTS FacturasProductos("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "FacturaId INTEGER NOT NULL REFERENCES Facturas ON DELETE CASCADE,"
-					+ "ClienteId INTEGER NOT NULL REFERENCES Clientes ON DELETE CASCADE);");
+					+ "FacturaId INTEGER REFERENCES Facturas ON DELETE CASCADE,"
+					+ "ProductoId INTEGER REFERENCES Productos ON DELETE CASCADE);");
 			stmt4.close();
 
 			Statement stmt5 = c.createStatement();
@@ -113,22 +113,22 @@ public class JDBCManager implements DBManager{
 			stmt6.executeUpdate( "CREATE TABLE IF NOT EXISTS Plantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
 					+ "Hectareas REAL NOT NULL,"
-					+ "ProductoId INTEGER NOT NULL REFERENCES Productos ON DELETE CASCADE,"
+					+ "ProductoId INTEGER REFERENCES Productos ON DELETE CASCADE,"
 					+ "HoraRegado TEXT NOT NULL);");
 			stmt6.close();
 
 			Statement stmt7 = c.createStatement();
 			stmt7.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosPlantaciones("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados ON DELETE CASCADE,"
-					+ "PlantacionId NOT NULL REFERENCES Plantaciones ON DELETE CASCADE);");
+					+ "EmpleadoId INTEGER REFERENCES Empleados ON DELETE CASCADE,"
+					+ "PlantacionId REFERENCES Plantaciones ON DELETE CASCADE);");
 			stmt7.close();
 
 			Statement stmt8 = c.createStatement();
 			stmt8.executeUpdate("CREATE TABLE IF NOT EXISTS EmpleadosAnimales("
 					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "EmpleadoId INTEGER NOT NULL REFERENCES Empleados ON DELETE CASCADE,"
-					+ "AnimalId INTEGER  NOT NULL REFERENCES Animales ON DELETE CASCADE);");
+					+ "EmpleadoId INTEGER REFERENCES Empleados ON DELETE CASCADE,"
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");
 			stmt8.close();
 
 		} catch (SQLException e) {
@@ -185,7 +185,28 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
+	//prueba__________________________________________________
+	@Override
+	public void addFacturaP(Factura factura) {
 
+		try {
+
+			PreparedStatement prep = c.prepareStatement("INSERT INTO Facturas (Fecha, Importe, MetodoPago, ClienteId) VALUES (?,?,?,?);");
+			
+			prep.setDate(1, factura.getFecha());
+			prep.setFloat(2, factura.getImporte());
+			prep.setBoolean(3, factura.getMetodo_de_pago());
+			Cliente cliente = factura.getCliente();
+			prep.setInt(4, searchClienteByDNI(cliente.getDni()));//id del cliente
+			
+			prep.executeUpdate();
+			prep.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+
+	}
 	@Override
 
 	public void addEmpleado (Empleado empleado) {
@@ -222,7 +243,24 @@ public class JDBCManager implements DBManager{
 		}			
 
 	}
-	
+	@Override
+	public void addProducto(Producto producto) {
+
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades) VALUES (?,?,?,?,?);");
+			prep.setString(1, producto.getNombre());
+			prep.setInt(2, producto.getCantidad());
+			prep.setString(3, producto.getTipo());
+			prep.setString(4, producto.getUnidades());
+			prep.setFloat(5, producto.getPrecio());
+			prep.executeUpdate();
+			prep.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+
+	}
+	@Override
 	public void addImagen(Empleado empleado) {
 		try {
 			PreparedStatement prep = c.prepareStatement(insertarImagen);
@@ -234,7 +272,7 @@ public class JDBCManager implements DBManager{
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
 		}
-			
+
 
 	}
 	@Override
@@ -276,8 +314,8 @@ public class JDBCManager implements DBManager{
 		//Vamos a devolver el ArrayList
 		return empleados;
 	}
-	
-	
+
+
 	@Override
 	public List<Cliente> searchClientes() {
 		/*Iniciamos nuestro ArrayList que va a contener todos los empleados que vamos a ejecutar en nuestra búsqueda. 
@@ -321,7 +359,7 @@ public class JDBCManager implements DBManager{
 			PreparedStatement prep = c.prepareStatement(eliminarUnEmpleado);
 			prep.setString(1,"%" + nombreEmpleado + "%");
 			int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
-											//y si hace cambios devuelve el numero de filas afectas
+			//y si hace cambios devuelve el numero de filas afectas
 			if(res > 0)
 				existe = true;
 			prep.close();
@@ -332,9 +370,9 @@ public class JDBCManager implements DBManager{
 		return existe;
 	}
 
-	
+
 	@Override
-	
+
 	public List<Empleado> searchEmpleadoByNombre(String nombreEmpleado){
 		List<Empleado> empleados = new ArrayList<Empleado>();
 		try {
@@ -348,7 +386,7 @@ public class JDBCManager implements DBManager{
 				String DNI = rs.getString("DNI");
 				Date fecha_nac = rs.getDate("Fech_Nac");
 				float sueldo = rs.getFloat("Sueldo");
-				
+
 				Empleado empleado = new Empleado (nombre, telefono, direccion, DNI, fecha_nac, sueldo);
 				empleados.add(empleado);
 				LOGGER.fine("Empleado encontrados: " + empleado);
@@ -360,11 +398,11 @@ public class JDBCManager implements DBManager{
 		}
 		return empleados;
 	}
-	
-	
-	
+
+
+
 	@Override
-	
+
 	public List<Empleado> searchEmpleadoById(int idEmpleado){
 		List<Empleado> empleados = new ArrayList<Empleado>();
 		try {
@@ -379,7 +417,7 @@ public class JDBCManager implements DBManager{
 				String DNI = rs.getString("DNI");
 				Date fecha_nac = rs.getDate("Fech_Nac");
 				float sueldo = rs.getFloat("Sueldo");
-				
+
 				Empleado empleado = new Empleado (id, nombre, telefono, direccion, DNI, fecha_nac, sueldo);
 				empleados.add(empleado);
 				LOGGER.fine("Empleado encontrados: " + empleado);
@@ -391,43 +429,31 @@ public class JDBCManager implements DBManager{
 		}
 		return empleados;
 	}
-	
+
 	@Override
-	
-	public List<Cliente> searchClienteByDNI(String Dnicliente){
-		
-		List<Cliente> clientes = new ArrayList<Cliente>();
+	public int searchClienteByDNI(String Dnicliente){
+		int id = -1;
 		try {
-			PreparedStatement prep = c.prepareStatement("SELECT * FROM Cliente WHERE DNI = ?;");
+			PreparedStatement prep = c.prepareStatement("SELECT Id FROM Clientes WHERE DNI = ?;");
 			prep.setString(1, Dnicliente);
 			ResultSet rs = prep.executeQuery();
-			while(rs.next()){
-				int id = rs.getInt("Id");
-				String nombre = rs.getString("Nombre");
-				int telefono = rs.getInt("Telefono");
-				String direccion = rs.getString("Direccion");
-				String DNI = rs.getString("DNI");
-				Cliente cliente = new Cliente (id, nombre, telefono, direccion, DNI);
-				clientes.add(cliente);
-				LOGGER.fine("Empleado encontrados: " + cliente);
-			}
-			prep.close();
+			id = rs.getInt("Id");
 		} catch (SQLException e) {
 			LOGGER.severe("Error al hacer un SELECT");
 			e.printStackTrace();
 
 		}
-		return clientes;	
+		return id;	
 	}
 	@Override
 	public boolean actualizarEmpleado(int idEmpleado) {
 		boolean existe = false;
 		try {
 			PreparedStatement prep = c.prepareStatement(actualizarNumeroTelefono);
-			
+
 			prep.setInt(1, idEmpleado);
 			int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
-											//y si hace cambios devuelve el numero de filas afectas
+			//y si hace cambios devuelve el numero de filas afectas
 			if(res > 0)
 				existe = true;
 			prep.close();
