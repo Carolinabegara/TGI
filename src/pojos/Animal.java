@@ -29,6 +29,8 @@ public class Animal implements Serializable {
 	@XmlElement
 	private String especie;
 	@XmlElement
+	private String peso;
+	@XmlElement
 	@XmlJavaTypeAdapter(SQLDateAdapter.class)
 	private Date fecha_Nac;
 	@XmlTransient
@@ -43,21 +45,30 @@ public class Animal implements Serializable {
 		super();
 	}
 
-	public Animal(int id, String especie, Date fecha_Nac, byte[] foto) {
+	public Animal(int id, String especie,String peso, Date fecha_Nac, byte[] foto) {
 		super();
 		this.id = id;
 		this.especie = especie;
+		this.peso = peso;
 		this.fecha_Nac = fecha_Nac;
 		this.foto = foto;
 	}
-	public Animal(int id, String especie, Date fecha_Nac) {
+	public Animal(int id, String especie,String peso, Date fecha_Nac) {
 		super();
 		this.id = id;
 		this.especie = especie;
+		this.peso = peso;
 		this.fecha_Nac = fecha_Nac;
 		
 	}
 
+	public Animal(String especie, String peso, Date fecha_Nac) {
+		super();
+		this.especie = especie;
+		this.peso = peso;
+		this.fecha_Nac = fecha_Nac;
+		
+	}
 	public Animal(String especie, Date fecha_Nac) {
 		super();
 		this.especie = especie;
@@ -87,6 +98,15 @@ public class Animal implements Serializable {
 	}
 	public void setFoto(byte[] foto) {
 		this.foto = foto;
+	}
+	
+
+	public String getPeso() {
+		return peso;
+	}
+
+	public void setPeso(String peso) {
+		this.peso = peso;
 	}
 
 	@Override

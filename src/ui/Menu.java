@@ -21,12 +21,14 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import db.interfaces.DBManager;
 import db.interfaces.UsuariosManager;
 import db.interfaces.XMLManager;
 import db.jdbc.JDBCManager;
 import db.jpa.JPAUsuariosManager;
+import db.xml.SQLDateAdapter;
 import db.xml.XMLFicherosManager;
 import logging.MyLogger;
 import pojos.Animal;
@@ -102,8 +104,8 @@ public class Menu {
 				crearCuenta();//JPA
 				break;
 			case 3:
-				 tablaFacturas();
-				 tablaProductos();
+				tablaFacturas();
+				tablaProductos();
 				break;
 			case 0:
 				break;
@@ -228,7 +230,7 @@ public class Menu {
 				generarClientes();
 				break;
 			case 8:
-				Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));
+				Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));//OJO TENEMOS QUE AÑADIR EL PESO
 				xmlman.marshallingAnimal(animal);
 				break;
 			case 9:
@@ -715,12 +717,27 @@ public class Menu {
 		dbman.addFacturaP(factura);
 	}
 	private static void tablaProductos() {
-	
+		//datos de ANIMAL
+
+		String especie = "Vaca";
+		String peso = "843 Kg";
+		LocalDate fecha_Nac = LocalDate.parse("2020-06-05");
+		Animal animal = new Animal(especie, peso, Date.valueOf(fecha_Nac));
+		dbman.addAnimal(animal);
+
+		//datos de PRODUCTO
+		String nombreProducto = "Leche";
+		int cantidad = 4;
+		String tipo = "Animal";
+		String unidades = "Litros";
+		float precio = 2.4f;
+		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio, animal);
+		dbman.addProductoP(producto);
 	}
 
-	
-	
-	
+
+
+
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
 	 */
@@ -745,7 +762,7 @@ public class Menu {
 	}
 	/*		//datos de Producto1
 		List<Producto> productos= new ArrayList<Producto>();
-		
+
 		String nombreProducto = "Leche";
 		int cantidad = 4;
 		String tipo = "Animal";
@@ -755,7 +772,7 @@ public class Menu {
 		dbman.addProducto(producto);
 		productos.add(producto);
 		//datos de Producto2
-		
+
 		String nombreProducto2 = "Leche";
 		int cantidad2 = 4;
 		String tipo2 = "Animal";

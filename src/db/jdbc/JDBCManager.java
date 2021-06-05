@@ -5,11 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 import db.interfaces.DBManager;
-import pojos.Cliente;
-import pojos.Empleado;
-import pojos.Factura;
-import pojos.Plantacion;
-import pojos.Producto;
+import pojos.*;
+
 
 import java.io.IOException;
 
@@ -202,6 +199,53 @@ public class JDBCManager implements DBManager{
 			prep.executeUpdate();
 			prep.close();
 			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+
+	}
+	@Override
+/*		stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("
+					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
+					+ "Nombre TEXT NOT NULL,"
+					+ "Tipo TEXT NOT NULL,"
+					+ "Cantidad INTEGER NOT NULL,"
+					+ "Precio REAL NOT NULL, "
+					+ "Unidades TEXT NOT NULL,"
+					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE);");*/
+	public void addAnimal(Animal animal) {
+
+		try {
+
+			PreparedStatement prep = c.prepareStatement("INSERT INTO Animales (Especie, Fech_Nac, Peso) VALUES (?,?,?);");
+			
+			prep.setString(1, animal.getEspecie());
+		    prep.setDate(2, animal. getFecha_Nac());
+			prep.setString(3, animal.getPeso());
+
+			
+			prep.executeUpdate();
+			prep.close();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}			
+
+	}
+
+	@Override
+	public void addProductoP(Producto producto) {
+
+		try {
+			PreparedStatement prep = c.prepareStatement( "INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades,AnimalId) VALUES (?,?,?,?,?,?);");
+			prep.setString(1, producto.getNombre());
+			prep.setInt(2, producto.getCantidad());
+			prep.setString(3, producto.getTipo());
+			prep.setString(4, producto.getUnidades());
+			prep.setFloat(5, producto.getPrecio());
+			prep.setInt(6, searchAnimal(producto.getAnimal()));
+			prep.executeUpdate();
+			prep.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}			
@@ -436,6 +480,25 @@ public class JDBCManager implements DBManager{
 		try {
 			PreparedStatement prep = c.prepareStatement("SELECT Id FROM Clientes WHERE DNI = ?;");
 			prep.setString(1, Dnicliente);
+			ResultSet rs = prep.executeQuery();
+			id = rs.getInt("Id");
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+
+		}
+		return id;	
+	}
+
+	@Override
+	public int searchAnimal(Animal animal){
+		int id = -1;
+		try {
+			PreparedStatement prep = c.prepareStatement("SELECT Id FROM Animales WHERE Especie = ? AND Fech_Nac = ? AND Peso = ?;");
+			prep.setString(1, animal.getEspecie());
+			prep.setDate(2, animal.getFecha_Nac());
+			prep.setString(3, animal.getPeso());
+
 			ResultSet rs = prep.executeQuery();
 			id = rs.getInt("Id");
 		} catch (SQLException e) {

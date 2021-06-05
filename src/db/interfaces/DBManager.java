@@ -1,7 +1,9 @@
 package db.interfaces;
 
+import java.sql.Date;
 import java.util.List;
 
+import pojos.Animal;
 import pojos.Producto;
 import pojos.Cliente;
 import pojos.Empleado;
@@ -46,7 +48,9 @@ public interface DBManager {
 	public int searchClienteByDNI(String Dnicliente);
 	public void addProducto(Producto producto);
 	public void addFacturaP(Factura factura);
-	
+	public void addAnimal(Animal animal);
+	public int searchAnimal(Animal animal);
+	public void addProductoP(Producto producto);
 
 	
 }
