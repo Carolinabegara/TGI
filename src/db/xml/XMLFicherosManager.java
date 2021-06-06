@@ -39,7 +39,7 @@ public class XMLFicherosManager implements XMLManager{
 		Marshaller jaxbM = jaxbC.createMarshaller();
 		// Formateo bonito
 		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"Animal.dtd\">");
+		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE animal SYSTEM \"Animal.dtd\">");
 		jaxbM.setProperty("com.sun.xml.bind.xmlDeclaration", false);
 		// Escribiendo en un fichero
 		File XMLfile = new File("./xml/Animal.xml");
@@ -56,7 +56,7 @@ public class XMLFicherosManager implements XMLManager{
 		Marshaller jaxbM = jaxbC.createMarshaller();
 		// Formateo bonito
 		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE producto SYSTEM \"Plantacion.dtd\">");
+		jaxbM.setProperty("com.sun.xml.bind.xmlHeaders", "\n<!DOCTYPE plantacion SYSTEM \"Plantacion.dtd\">");
 		jaxbM.setProperty("com.sun.xml.bind.xmlDeclaration", false);
 		// Escribiendo en un fichero
 		File XMLfile = new File("./xml/Plantacion.xml");
@@ -82,21 +82,7 @@ public class XMLFicherosManager implements XMLManager{
 	}
 
 
-	@Override
-	public void marshallingProductoPrueba(Producto prod) throws JAXBException {
 
-		// Creamos el JAXBContext
-		JAXBContext jaxbC= JAXBContext.newInstance(Producto.class);
-		// Creamos el JAXBMarshaller
-		Marshaller jaxbM= jaxbC.createMarshaller();
-		// Formateo bonito
-		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
-		// Escribiendo en un fichero
-		File XMLfile= new File("Producto.xml");
-		jaxbM.marshal(prod, XMLfile);
-		// Escribiendo por pantalla
-		jaxbM.marshal(prod, System.out);
-	}
 	@Override
 	public void unmarshallingAnimal() throws JAXBException {
 

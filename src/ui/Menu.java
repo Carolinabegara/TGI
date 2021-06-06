@@ -100,15 +100,6 @@ public class Menu {
 			case 2:
 				crearCuenta();//JPA
 				break;
-			case 3:
-				tablaFacturas();
-				tablaProductos();
-				tablaPlantaciones();
-				generarEmpleados();
-				tablaEmpleadoAnimal();
-				tablaEmpleadoPlantaciones();
-				tablaFacturasProductos();
-				break;
 			case 0:
 				break;
 			}
@@ -129,24 +120,15 @@ public class Menu {
 			System.out.println("1. Consultar");
 			System.out.println("2. Insertar");
 			System.out.println("3. Borrar");
-			System.out.println("4. Actualizar teléfono");
-			System.out.println("5. Actualizar contraseña");
-			System.out.println("6. Generar empleados de prueba");
-			System.out.println("7. Generar clientes de prueba");
-			System.out.println("8. Marshalling animal");
-			System.out.println("9. Marshalling plantacion");
-			System.out.println("10. Marshalling producto");
-			System.out.println("11. Unmarshalling animal");
-			System.out.println("12. Unmarshalling plantacion");
-			System.out.println("13. Validar XML de producto (DTD)");
-			System.out.println("14. Validar XML de animal (DTD)");
-			System.out.println("15. Validar XML de plantacion (DTD)");
-			System.out.println("16. Generar HTML de producto");
-			System.out.println("17. Generar HTML de animal");
-			System.out.println("18. Generar HTML de plantacion");
-
-
+			System.out.println("4. Actualizar");
+			System.out.println("5. Generar empleados o clientes");
+			System.out.println("6. Marshalling");
+			System.out.println("7. Unmarshalling");
+			System.out.println("8. Validar XML con (DTD)");
+			System.out.println("9. Generar HTML");
+			System.out.println("10. Insertar datos");
 			System.out.println("0. Salir");
+
 
 			try {
 				opcion_empleado = Integer.parseInt(reader.readLine());
@@ -220,65 +202,252 @@ public class Menu {
 
 				break;
 			case 4: 
-				actualizarTelefono();
+				actualizar();
 				break;
-			case 5: 
-				actualizarContrasenia();//JPA
+
+			case 5:
+				generarEmpleadosClientes();
 				break;
+
 			case 6:
-				generarEmpleados();
+				ejecutarMarshalling();
+
 				break;
+
 			case 7:
-				generarClientes();
+				ejecutarUnMarshalling();
 				break;
 			case 8:
-				Animal animal = new Animal("Vaca","700Kg",Date.valueOf("2020-06-12"));//OJO TENEMOS QUE AÑADIR EL PESO
+				xmlDTD();
+				break;
+
+			case 9:
+				generarHTML();
+				break;
+			case 10:
+				insertarDatos();
+				break;
+
+
+			case 0:
+				break;
+			}
+		}
+	}
+
+
+
+	public static void actualizar() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Actualizar");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Actualizar teléfono");
+			System.out.println("2. Actualizar contraseña");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1: 
+				actualizarTelefono();
+				break;
+			case 2: 
+				actualizarContrasenia();//JPA
+				break;
+			case 0:
+				break;
+
+
+			}
+		}
+	}
+
+	public static void generarEmpleadosClientes() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Generar empleados o clientes");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Generar empleados");
+			System.out.println("2. Generar clientes");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1:
+				generarEmpleados();
+				break;
+			case 2:
+				generarClientes();
+				break;
+			case 0:
+				break;
+
+
+			}
+		}
+	}
+
+	public static void ejecutarMarshalling() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Marshaling");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Marshalling animal");
+			System.out.println("2. Marshalling plantacion");
+			System.out.println("3. Marshalling producto");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1:
+				Animal animal = new Animal("Vaca","700Kg",Date.valueOf("2020-06-12"));
 				xmlman.marshallingAnimal(animal);
 				break;
-			case 9:
+			case 2:
 				Plantacion plantacion = new Plantacion(Date.valueOf("2020-06-12"),1003);
 				xmlman.marshallingPlantacion(plantacion);
 				break;
-			case 10:
-
+			case 3:
 				Plantacion plantacion2 = new Plantacion(Date.valueOf("2021-05-20"),1003);
 				Producto producto = new Producto("Patatas",100,"Plantación","Kilos",1,null,plantacion2);
-				xmlman.marshallingProductoPrueba(producto);
-				//xmlman.marshallingProducto(producto);
+				xmlman.marshallingProducto(producto);
 
 				break;
-			case 11:
+			case 0:
+				break;
+
+
+			}
+		}
+	}
+
+	public static void ejecutarUnMarshalling() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Unmarshalling");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Unmarshalling animal");
+			System.out.println("2. Unmarshalling plantacion");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1:
 				xmlman.unmarshallingAnimal();
 				break;
-			case 12:
+			case 2:
 				xmlman.unmarshallingPlantacion();
 				break;
+			case 0:
+				break;
 
-			case 13:
+
+			}
+		}
+	}
+
+	public static void xmlDTD() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+			System.out.println("Actualizar");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Validar XML de producto (DTD)");
+			System.out.println("2. Validar XML de animal (DTD)");
+			System.out.println("3. Validar XML de plantacion (DTD)");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1:
 				File xmlFileProducto = new File("./xml/Producto.xml");
 				xmlman.xmlValido(xmlFileProducto);
 				break;
-			case 14:
+			case 2:
 				File xmlFileAnimal = new File("./xml/Animal.xml");
 				xmlman.xmlValido(xmlFileAnimal);
 				break;
-			case 15:
+			case 3:
 				File xmlFilePlantacion = new File("./xml/Plantacion.xml");
 				xmlman.xmlValido(xmlFilePlantacion);
 				break;
-			case 16:
+			case 0:
+				break;
+
+
+			}
+		}
+	}
+
+
+	public static void generarHTML() throws JAXBException{
+		int opcion_empleado=-1;
+		while(opcion_empleado!=0) {
+
+			System.out.println("Generar HTML");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Generar HTML de producto");
+			System.out.println("2. Generar HTML de animal");
+			System.out.println("3.Generar HTML de plantacion");
+			System.out.println("0. Salir");
+			try {
+				opcion_empleado = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_empleado);
+			} catch (NumberFormatException | IOException e) {
+				opcion_empleado = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+			switch(opcion_empleado) {
+			case 1:
+
 				String sourcePathProd = "./xml/Producto.xml";
 				String xsltPathProd = "./xml/Producto.xslt";
 				String resultDirProd = "./xml/Producto.html";
 				xmlman.generarXSLT(sourcePathProd, xsltPathProd, resultDirProd);
 				break;
-			case 17:
+			case 2:
 				String sourcePathAnim = "./xml/Animal.xml";
 				String xsltPathAnim = "./xml/Animal.xslt";
 				String resultDirAnim = "./xml/Animal.html";
 				xmlman.generarXSLT(sourcePathAnim, xsltPathAnim, resultDirAnim);
 				break;
-			case 18:
+			case 3:
 				String sourcePathPlant = "./xml/Plantacion.xml";
 				String xsltPathPlant = "./xml/Plantacion.xslt";
 				String resultDirPlant = "./xml/Plantacion.html";
@@ -287,10 +456,40 @@ public class Menu {
 
 			case 0:
 				break;
+
+
 			}
 		}
 	}
 
+	//CLIENTE
+	public static void menuCliente() throws JAXBException{
+		int opcion_cliente=-1;
+		while(opcion_cliente!=0) {
+			System.out.println("Menú cliente");
+			System.out.println("Elije una opción:");
+			System.out.println("1. Consultar producto");
+			System.out.println("0. Salir");
+
+			try {
+				opcion_cliente = Integer.parseInt(reader.readLine());
+				LOGGER.info("El usuario elije " + opcion_cliente);
+			} catch (NumberFormatException | IOException e) {
+				opcion_cliente = -1;
+				LOGGER.warning("El usuario no ha introducido un número");
+				e.printStackTrace();
+			}
+
+
+			switch(opcion_cliente) {
+			case 1: 
+				mostrarProductos();
+				break;
+			case 0:
+				break;
+			}
+		}
+	}
 	//_____________________MENÚ_CONSULTA_________________
 
 	private static int  menuConsultar() {
@@ -357,7 +556,7 @@ public class Menu {
 					menuEmpleado();
 
 				}else if(usuario.getRol().getNombre().equalsIgnoreCase("cliente")) {
-					//menuCliente();
+					menuCliente();
 				}
 			}
 
@@ -486,6 +685,17 @@ public class Menu {
 		System.out.println("Se han encontrado los siguientes clientes");
 		for(Cliente cliente : clientes) {
 			System.out.println(cliente);
+		}
+	}
+
+
+	//1.MOSTRAR__________________________PRODUCTOS________________________________________________________________//
+	private static void mostrarProductos() {
+		List<Producto> productos = dbman.searchProductos();
+		System.out.println("Se han encontrado los siguientes productos");
+
+		for(Producto producto : productos) {
+			System.out.println(productos);
 		}
 	}
 
@@ -759,10 +969,10 @@ public class Menu {
 			dbman.addProductoP(producto);
 
 		}else {//Puede ser un Cerdo o una oveja que más o menos tienen el mismo peso
-			
+
 			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], (randomInt(200,100)+"Kg"), generarFechaAleatoria(tipo));
 			dbman.addAnimal(animal);
-			
+
 			if(ANIMALES_ESPECIE[randomKind].equals("Cerdo")) {
 
 				//datos de PRODUCTO
@@ -882,7 +1092,7 @@ public class Menu {
 	}
 	private static Date generarFechaAleatoria(String tipoFecha) {//pasamos un string para saber si es un empleado o una fatura/plantacion
 		int year = -1;
-		
+
 		if(tipoFecha.equals("Empleado")){//rango de fechas de 60 años
 			year = 1960 + randomInt(0,40);//vamos a tener trabajadores de entre 60 y 20 años
 		}else if(tipoFecha.equals("Animal")){
@@ -890,19 +1100,29 @@ public class Menu {
 		}else {//fecha para plantaciones y facturas
 			year = 2021;//La granja se abrió este año
 		}
-		
+
 		int month = randomInt(1,12);//genera número entre [1,13), es decir, un numero entre el 1 y el 12
 		int date = randomInt(0,30);
 		String monthText = (month <=9)? "0" + month : "" + month;//si (month <=9) es true devuelve lo que está antes de : y sino lo que está después 
 		String dateText = (date <=9)? "0" + date : "" + date;
 		LocalDate fecha = LocalDate.parse(year + "-" + monthText + "-" + dateText, formatter);
-		
+
 		return Date.valueOf(fecha);
 	}
 	private static int randomInt(int max, int min) {
 		/*Random r1 = new Random(System.currentTimeMillis());
 		return (r1.nextInt()*(max - min)+min);*/
-		return (int) Math.random()*(max - min)+min;
+		return (int) Math.random()*10+1;
+		//return (int) Math.random()*(max - min)+min;
+	}
+	private static void insertarDatos() {
+		tablaFacturas();
+		tablaProductos();
+		tablaPlantaciones();
+		generarEmpleados();
+		tablaEmpleadoAnimal();
+		tablaEmpleadoPlantaciones();
+		tablaFacturasProductos();
 	}
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
@@ -926,6 +1146,8 @@ public class Menu {
 		}
 		return bos != null ? bos.toByteArray() : null;
 	}
+
+
 
 }
 
