@@ -16,6 +16,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.logging.Logger;
 
 import javax.xml.bind.JAXBException;
@@ -46,37 +47,22 @@ public class Menu {
 
 
 	//DATOS DE PRUEBA
-	
+
 	//Usamos los siguientes datos para empleados y clientes
 	private final static String[] NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
 	private final static int[] TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
 	private final static String[] DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
-	private final static String[] DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
-	
-	//Datos para empleados
-	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
-	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
-	
+
 	//Datos para factura
-	private final static String[] FACTURAS_FECHAS = {"2021-06-05","2017-04-22","2018-09-24","2020-12-23","2019-04-17","2021-05-23","2021-03-27","2020-01-06","2021-02-30","2019-11-25","2019-06-06"};
 	private final static Float[] FACTURAS_IMPORTES = {200.54f,30.0f,50.65f,10.50f,5.45f,17.20f,40.45f,1.50f,34.8f,25.5f,350.67f,550.3f};
 	private final static Boolean[] FACTURAS_METODO_PAGO = {false,true};
-	
+
 	//Datos para animales
 	private final static String[] ANIMALES_ESPECIE = {"Vaca","Cerdo","Gallina","Oveja"};
-	private final static String[] ANIMALES_PESO_ALTO = {"720Kg","700Kg","650Kg","499Kg","430Kg","500Kg"};
-	private final static String[] ANIMALES_PESO_MEDIO = {"100Kg","150Kg","200Kg","90Kg","120Kg"};
-	private final static String[] ANIMALES_PESO_BAJO = {"5.45Kg","4.5Kg","3.67Kg","2.9Kg","4.67Kg","1.89Kg","5kg"};
-	private final static String[] ANIMALES_FECHA = {"2018-09-20","2019-03-24","2019-07-08","2020-01-02","2016-09-03","2021-01-01","2015-12-12","2019-05-06"};
-	
+
 	//Datos para productos
 	private final static Integer[] PRODUCTOS_CANTIDAD = {1,2,3,20,50,100,300,11,30,70,4,6,40};
 
-	//Datos para plantaciones
-	private final static String [] PLANTACIONES_NOMBREPRODUCTOS = {"Maiz","Tomate","Uvas","Pimientos","Patatas","Lechugas","Fresas","Sandias","Zanahorias","Pepinos","Melones","Alcachofas"};
-	private final static String[] PLANTACIONES_ULTIMO_REGADO = {"2021-06-05","2021-06-06","2021-06-07","2021-06-08","2021-06-09","2021-06-04","2021-06-03","2021-06-02","2021-06-01"};
-	private final static Float[] PLANTACIONES_HECTAREAS = {100.50f,4.75f,8.9f,20.43f,80.97f,34.56f,51.67f};
-			
 	public static void main(String[] args)  throws JAXBException{
 
 		try {
@@ -644,8 +630,7 @@ public class Menu {
 
 	private static void generarEmpleados() {
 		for(int i = 0; i < NOMBRES.length; i++) {
-			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
-			Empleado empleado = new Empleado(NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
+			Empleado empleado = new Empleado(NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], generarDniAleatorio(), generarFechaAleatoria("Empleado"), randomFloat(500f,2000f));
 			dbman.addEmpleado(empleado);
 		}
 		System.out.println("Se han generado " + NOMBRES.length + " empleados.");
@@ -658,7 +643,7 @@ public class Menu {
 
 	private static void generarClientes() {
 		for(int i = 0; i < NOMBRES.length; i++) {
-			Cliente cliente = new Cliente (NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], DNI[i]);
+			Cliente cliente = new Cliente (NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], generarDniAleatorio());
 			dbman.addCliente(cliente);
 		}
 		System.out.println("Se han generado " + NOMBRES.length + " clientes.");
@@ -714,67 +699,59 @@ public class Menu {
 	}
 
 	//______________________________________Pruebas__________________________________________________________
+	/*Math.random() devuelve un dooble mayor que 0 y menor que 1*/
 	private static void tablaFacturas() {
 
 		//datos de CLIENTE
 
-		int randomName =(int) Math.floor(Math.random()*NOMBRES.length);
+		int randomName =(int) Math.floor(Math.random()*NOMBRES.length);//generamos un número entre 0 y el número de nombres que tengamos en el array
 		int randomPhone = (int) Math.floor(Math.random()*TELEFONOS.length);
 		int randomAddress = (int) Math.floor(Math.random()*DIRECCIONES.length);
-		int randomDni = (int) Math.floor(Math.random()*DNI.length);
 
-		
-		Cliente cliente = new Cliente(NOMBRES[randomName],TELEFONOS[randomPhone],DIRECCIONES[randomAddress],DNI[randomDni]);
+
+		Cliente cliente = new Cliente(NOMBRES[randomName],TELEFONOS[randomPhone],DIRECCIONES[randomAddress],generarDniAleatorio());
 		dbman.addCliente(cliente);
 
 		//datos de EMPLEADO
-		
+
 		int randomNameEmp = (int) Math.floor(Math.random()*NOMBRES.length);
 		int randomPhoneEmp = (int) Math.floor(Math.random()*TELEFONOS.length);
 		int randomAddressEmp = (int) Math.floor(Math.random()*DIRECCIONES.length);
-		int randomDniEmp = (int) Math.floor(Math.random()*DNI.length);
-		int randomDateEmp =(int) Math.floor(Math.random()*EMPLEADOS_FECHA.length);
-		int randomSalary =(int) Math.floor(Math.random()*EMPLEADOS_SUELDO.length);
-		
-		Empleado empleado = new Empleado(NOMBRES[randomNameEmp],TELEFONOS[randomPhoneEmp],DIRECCIONES[randomAddressEmp],DNI[randomDniEmp],Date.valueOf(EMPLEADOS_FECHA[randomDateEmp]),EMPLEADOS_SUELDO[randomSalary]);
+
+		Empleado empleado = new Empleado(NOMBRES[randomNameEmp],TELEFONOS[randomPhoneEmp],DIRECCIONES[randomAddressEmp],generarDniAleatorio(),generarFechaAleatoria("Empleado"),randomFloat(500f,2000f));
 		dbman.addEmpleado(empleado);
-		
+
 		//datos de FACTURA
-		
-		int randomDate =(int) Math.floor(Math.random()*FACTURAS_FECHAS.length);
+
+
 		int randomAmount = (int) Math.floor(Math.random()*FACTURAS_IMPORTES.length);
 		int randomPaymentMethod = (int) Math.floor(Math.random()*FACTURAS_METODO_PAGO.length);
-		
-		LocalDate fecha = LocalDate.parse(FACTURAS_FECHAS[randomDate], formatter);
-		Factura factura = new Factura(Date.valueOf(fecha),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod],empleado, cliente);
+
+		Factura factura = new Factura(generarFechaAleatoria("Factura"),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod],empleado, cliente);
 		dbman.addFacturaP(factura);
 	}
-	
+
 	private static void tablaProductos() {
 
 		int randomKind =(int) Math.floor(Math.random()*ANIMALES_ESPECIE.length);
-		int randomDate =(int) Math.floor(Math.random()*ANIMALES_FECHA.length);
-		LocalDate fecha = LocalDate.parse(ANIMALES_FECHA[randomDate], formatter);
 		int randomQuantity =(int) Math.floor(Math.random()*PRODUCTOS_CANTIDAD.length);
 		String tipo = "Animal";
-		
+		//Distinguimos entre los animales de nuestra graja porque no tienen el mismo peso ni dan los mismos productos
 		if(ANIMALES_ESPECIE[randomKind].equals("Vaca")) {
-			
-			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_ALTO.length);
-			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_ALTO[randomWeight], Date.valueOf(fecha));
+
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], (randomInt(400,700)+"Kg"), generarFechaAleatoria(tipo));
 			dbman.addAnimal(animal);
 			//datos de PRODUCTO
 			String nombreProducto = "Leche";
-			
+
 			String unidades = "Litros";
 			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
 			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);//no son producto de plantacion por eso pasamos un objeto null
 			dbman.addProductoP(producto);
-			
+
 		}else if(ANIMALES_ESPECIE[randomKind].equals("Gallina")){
-			
-			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_BAJO.length);
-			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_BAJO[randomWeight], Date.valueOf(fecha));
+
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], (randomFloat(2.5f,7.5f)+"Kg"),generarFechaAleatoria(tipo));
 			dbman.addAnimal(animal);
 			//datos de PRODUCTO
 			String nombreProducto = "Huevos";
@@ -782,10 +759,9 @@ public class Menu {
 			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
 			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 			dbman.addProductoP(producto);
-			
+
 		}else {//Puede ser un Cerdo o una oveja que más o menos tienen el mismo peso
-			int randomWeight =(int) Math.floor(Math.random()*ANIMALES_PESO_MEDIO.length);
-			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], ANIMALES_PESO_MEDIO[randomWeight], Date.valueOf(fecha));
+			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], (randomInt(200,100)+"Kg"), generarFechaAleatoria(tipo));
 			dbman.addAnimal(animal);
 			if(ANIMALES_ESPECIE[randomKind].equals("Cerdo")) {
 
@@ -795,40 +771,37 @@ public class Menu {
 				float precio = (float)(15*PRODUCTOS_CANTIDAD[randomQuantity]);
 				Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 				dbman.addProductoP(producto);
-				
+
 			}else {//OVEJA
 				String[] PRODUCTOS_OVEJA = {"Leche","Lana"};
 				int randomName = (int) Math.floor(Math.random()*PRODUCTOS_OVEJA.length);
-				
+
 				if(PRODUCTOS_OVEJA[randomName].equals("Leche")) {
 					String unidades = "Litros";
 					float precio = (float)(4*PRODUCTOS_CANTIDAD[randomQuantity]);
 					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
-					
+
 				}else {//lana
-					
+
 					String unidades = "Kilos";
 					float precio = (float)(2.75*PRODUCTOS_CANTIDAD[randomQuantity]);
 					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
 				}
-				
+
 			}
 		}
 
 
-		
+
 	}
 	private static void tablaPlantaciones() {
 		//datos Plantacion
-		
-		int randomDate =  (int) Math.floor(Math.random()*PLANTACIONES_ULTIMO_REGADO.length);
-		LocalDate ultimo_regado = LocalDate.parse(PLANTACIONES_ULTIMO_REGADO[randomDate]);
-		int randomHectares =  (int) Math.floor(Math.random()*PLANTACIONES_HECTAREAS.length);
-		Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado),PLANTACIONES_HECTAREAS[randomHectares]);
+
+		Plantacion plantacion = new Plantacion(generarFechaAleatoria("Plantacion"),(randomFloat(1.5f,1500.50f)));
 		dbman.addPlantacion(plantacion);
-		
+
 		//datos Producto
 		String [] PLANTACIONES_NOMBREPRODUCTOS = {"Maiz","Tomate","Uvas","Pimientos","Patatas","Lechugas","Fresas","Sandias","Zanahorias","Pepinos","Melones","Alcachofas"};
 		int randomPlantacion = (int) Math.floor(Math.random()*PLANTACIONES_NOMBREPRODUCTOS.length);
@@ -839,13 +812,13 @@ public class Menu {
 		Producto producto = new Producto(PLANTACIONES_NOMBREPRODUCTOS[randomPlantacion],cantidad,tipo,unidades,precio, null,plantacion);//Como no es un producto animal pasamos un objeto null
 		dbman.addProductoConPlantacion(producto);
 
-		
+
 	}
 
 	private static void tablaEmpleadoAnimal() {
 		List<Empleado> empleados = dbman.searchEmpleados();//miro cuantos empleados tengo en mi base de datos
 		int empleadoId = (int) Math.floor(Math.random()*empleados.size());//genero un id aleatorio entre 1 y el numero de empleados que tenga 
-																				//para obtener un empleado aleatorio
+		//para obtener un empleado aleatorio
 
 		List<Animal> animales = dbman.searchAnimales();
 		int animalId = (int) Math.floor(Math.random()*animales.size());
@@ -873,8 +846,64 @@ public class Menu {
 		dbman.addFacturasProductos(facturas.get(facturaId),productos.get(productoId));
 
 	}
-	
+	private static String generarDniAleatorio() {
+		int numDni = (int) Math.floor(Math.random()*100000000);
+		String dni = "";
+		switch(numDni%23){//hacemos el resto del número aleatorio para hallar la letra
+		case 0: dni = numDni + "T"; break;
+		case 1: dni = numDni + "R";break;
+		case 2: dni = numDni + "W";break;
+		case 3: dni = numDni + "A";break;
+		case 4: dni = numDni + "G";break;
+		case 5: dni = numDni + "M";break;
+		case 6: dni = numDni + "Y";break;
+		case 7: dni = numDni + "F";break;
+		case 8: dni = numDni + "P";break;
+		case 9: dni = numDni + "D";break;
+		case 10: dni = numDni + "X";break;
+		case 11: dni = numDni + "B";break;
+		case 12: dni = numDni + "N";break;
+		case 13: dni = numDni + "J";break;
+		case 14: dni = numDni + "Z";break;
+		case 15: dni = numDni + "S";break;
+		case 16: dni = numDni + "Q";break;
+		case 17: dni = numDni + "V";break;
+		case 18: dni = numDni + "H";break;
+		case 19: dni = numDni + "L";break;
+		case 20: dni = numDni + "C";break;
+		case 21: dni = numDni + "K";break;
+		case 22: dni = numDni + "E";break;
+		}
+		return dni;
+	}
 
+	private static float randomFloat (float max, float min) {
+		return (float) Math.random()*(max - min)+min;//devuelve un número entre el mínimo y el máximo
+	}
+	private static Date generarFechaAleatoria(String tipoFecha) {//pasamos un string para saber si es un empleado o una fatura/plantacion
+		int year = -1;
+		
+		if(tipoFecha.equals("Empleado")){//rango de fechas de 60 años
+			year = 1960 + randomInt(0,40);//vamos a tener trabajadores de entre 60 y 20 años
+		}else if(tipoFecha.equals("Animal")){
+			year = 2010 + randomInt(0,12);//los animales no pueden haber nacido hace 60 años por eso ponemos este rango de fechas
+		}else {//fecha para plantaciones y facturas
+			year = 2021;//La granja se abrió este año
+		}
+		
+		int month = randomInt(1,12);//genera número entre [1,13) es decir un numero entre el 1 y el 12
+		int date = randomInt(0,30);
+		String monthText = (month <=9)? "0" + month : "" + month;//si (month <=9) es true devuelve lo que está antes de : y sino lo que está después 
+		String dateText = (date <=9)? "0" + date : "" + date;
+		LocalDate fecha = LocalDate.parse(year + "-" + monthText + "-" + dateText, formatter);
+		
+		return Date.valueOf(fecha);
+	}
+	private static int randomInt(int max, int min) {
+		/*Random r1 = new Random(System.currentTimeMillis());
+		return (r1.nextInt()*(max - min)+min);*/
+		return (int) Math.random()*(max - min)+min;
+	}
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
 	 */

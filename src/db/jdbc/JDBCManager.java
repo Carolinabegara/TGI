@@ -491,24 +491,6 @@ public class JDBCManager implements DBManager{
 		return plantaciones;
 	}
 	
-	/*stmt3.executeUpdate("CREATE TABLE IF NOT EXISTS Facturas("
-					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "Fecha DATE NOT NULL,"
-					+ "Importe REAL NOT NULL,"
-					+ "MetodoPago TEXT NOT NULL,"
-					+ "ClienteId INTEGER REFERENCES Clientes ON DELETE CASCADE);");*/
-	/*private int id;
-	
-
-	private Date fecha;
-	@XmlElement
-	private Float importe;
-	@XmlElement
-	private boolean metodo_de_pago;
-	
-
-	@XmlTransient
-	private Cliente cliente;*/
 	
 	@Override
 	public List<Factura> searchFacturas() {
@@ -535,33 +517,7 @@ public class JDBCManager implements DBManager{
 		}
 		return facturas;
 	}
-	/*		stmt2.executeUpdate("CREATE TABLE IF NOT EXISTS Productos("
-					+ "Id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,"
-					+ "Nombre TEXT NOT NULL,"
-					+ "Tipo TEXT NOT NULL,"
-					+ "Cantidad INTEGER NOT NULL,"
-					+ "Precio REAL NOT NULL, "
-					+ "Unidades TEXT NOT NULL,"
-					+ "AnimalId INTEGER REFERENCES Animales ON DELETE CASCADE,"
-					+ "PlantacionId INTEGER REFERENCES Plantaciones ON DELETE CASCADE);");*/
-	/*	@XmlAttribute
-	private int id;
-	@XmlElement
-	private String nombre;
-	@XmlElement
-	private int cantidad;
-	@XmlElement
-	private String tipo;
-	@XmlElement
-	private String unidades;
-	@XmlElement
-	private float precio;
-	@XmlTransient
-	private List<Factura> facturas;
-	@XmlElement
-	private Animal animal;
-	@XmlElement
-	private Plantacion plantacion;*/
+
 	@Override
 	public List<Producto> searchProductos() {
 		List<Producto> productos= new ArrayList<Producto>();
@@ -768,7 +724,6 @@ public class JDBCManager implements DBManager{
 				existe = true;
 			prep.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return existe;
