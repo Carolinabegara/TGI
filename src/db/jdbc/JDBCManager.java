@@ -94,7 +94,8 @@ public class JDBCManager implements DBManager{
 					+ "Fecha DATE NOT NULL,"
 					+ "Importe REAL NOT NULL,"
 					+ "MetodoPago TEXT NOT NULL,"
-					+ "ClienteId INTEGER REFERENCES Clientes ON DELETE CASCADE);");
+					+ "ClienteId INTEGER REFERENCES Clientes ON DELETE CASCADE,"
+					+ "EmpleadoId INTEGER REFERENCES Empleados ON DELETE CASCADE);");
 			stmt3.close();
 			Statement stmt4 = c.createStatement();
 			stmt4.executeUpdate("CREATE TABLE IF NOT EXISTS FacturasProductos("
@@ -177,12 +178,11 @@ public class JDBCManager implements DBManager{
 			PreparedStatement prep = c.prepareStatement(addFactura);
 			prep.setDate(1, factura.getFecha());
 			prep.setFloat(2, factura.getImporte());
-			prep.setBoolean(3, factura.getMetodo_de_pago());
+			prep.setBoolean(3, factura.getMetodoPago());
 
 			prep.executeUpdate();
 			prep.close();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}			
 
@@ -193,13 +193,21 @@ public class JDBCManager implements DBManager{
 
 		try {
 
-			PreparedStatement prep = c.prepareStatement("INSERT INTO Facturas (Fecha, Importe, MetodoPago, ClienteId) VALUES (?,?,?,?);");
+			PreparedStatement prep = c.prepareStatement("INSERT INTO Facturas (Fecha, Importe, MetodoPago, EmpleadoId, ClienteId) VALUES (?,?,?,?,?);");
 
 			prep.setDate(1, factura.getFecha());
 			prep.setFloat(2, factura.getImporte());
-			prep.setBoolean(3, factura.getMetodo_de_pago());
+			prep.setBoolean(3, factura.getMetodoPago());
+			Empleado empleadoSinId = factura.getEmpleado();
+			
+			/*El empleado que tiene factura no tiene Id porque el id se asigna automáticamente en la base de datos 
+			 * por ello tenemos que buscar el Id en la base de datos. Además, el método searchEmpleadoByDni devuelve una lista de empleados
+			 * pero solo cogemos el primer elemento porque los dni son únicos para cada persona por lo que solo debería devolver un
+			 * único empleado.*/
+			
+			prep.setInt(4, (searchEmpleadoByDni(empleadoSinId.getDNI()).get(0)).getId());
 			Cliente cliente = factura.getCliente();
-			prep.setInt(4, searchClienteByDNI(cliente.getDni()));//id del cliente
+			prep.setInt(5, searchClienteByDNI(cliente.getDni()));//id del cliente
 
 			prep.executeUpdate();
 			prep.close();
@@ -335,6 +343,7 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}			
 
+		
 	}
 
 	@Override
@@ -660,6 +669,34 @@ public class JDBCManager implements DBManager{
 		try {
 			PreparedStatement prep = c.prepareStatement(searchUnEmpleadoId);
 			prep.setInt(1, idEmpleado);
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date fecha_nac = rs.getDate("Fech_Nac");
+				float sueldo = rs.getFloat("Sueldo");
+
+				Empleado empleado = new Empleado (id, nombre, telefono, direccion, DNI, fecha_nac, sueldo);
+				empleados.add(empleado);
+				LOGGER.fine("Empleado encontrados: " + empleado);
+			}
+			prep.close();
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return empleados;
+	}
+	@Override
+
+	public List<Empleado> searchEmpleadoByDni(String dniEmpleado){
+		List<Empleado> empleados = new ArrayList<Empleado>();
+		try {
+			PreparedStatement prep = c.prepareStatement("SELECT * FROM Empleados WHERE DNI = ?");
+			prep.setString(1, dniEmpleado);
 			ResultSet rs = prep.executeQuery();
 			while(rs.next()){
 				int id = rs.getInt("Id");

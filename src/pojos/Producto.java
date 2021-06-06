@@ -52,15 +52,7 @@ public class Producto {
 		this.unidades = unidades;
 		this.precio = precio;
 	}
-	public Producto(String nombre, int cantidad, String tipo, String unidades, float precio,Animal animal) {
-		super();
-		this.nombre = nombre;
-		this.cantidad = cantidad;
-		this.tipo = tipo;
-		this.unidades = unidades;
-		this.precio = precio;
-		this.animal = animal;
-	}
+
 	public Producto(String nombre, int cantidad, String tipo, String unidades, float precio,
 			Animal animal, Plantacion plantacion) {
 		super();

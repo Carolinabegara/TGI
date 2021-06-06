@@ -23,7 +23,7 @@ public class Factura {
 	@XmlElement
 	private Float importe;
 	@XmlElement
-	private boolean metodo_de_pago;
+	private boolean metodoPago;
 	
 	@XmlTransient
 	private Empleado empleado;
@@ -37,38 +37,39 @@ public class Factura {
 		super();
 	}
 	
-	public Factura(Date fecha, Float importe, boolean metodo_de_pago) {
+	public Factura(Date fecha, Float importe, boolean metodoPago) {
 		super();
 		this.fecha = fecha;
 		this.importe = importe;
-		this.metodo_de_pago = metodo_de_pago;
+		this.metodoPago = metodoPago;
 	}
 
-	public Factura(int id, Date fecha, Float importe, boolean metodo_de_pago) {
+	public Factura(int id, Date fecha, Float importe, boolean metodoPago) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.importe = importe;
-		this.metodo_de_pago = metodo_de_pago;
+		this.metodoPago = metodoPago;
 	}
 	
 	
  
-	public Factura(int id, Date fecha, Float importe, boolean metodo_de_pago, Empleado empleado, Cliente cliente) {
+	public Factura(int id, Date fecha, Float importe, boolean metodoPago, Empleado empleado, Cliente cliente) {
 		super();
 		this.id = id;
 		this.fecha = fecha;
 		this.importe = importe;
-		this.metodo_de_pago = metodo_de_pago;
+		this.metodoPago = metodoPago;
 		this.empleado = empleado;
 		this.cliente = cliente;
 		this.productos = new ArrayList<>();
 	}
-	public Factura(Date fecha, Float importe, boolean metodo_de_pago,Cliente cliente) {
+	public Factura(Date fecha, Float importe, boolean metodoPago, Empleado empleado, Cliente cliente) {
 		super();
 		this.fecha = fecha;
 		this.importe = importe;
-		this.metodo_de_pago = metodo_de_pago;
+		this.metodoPago = metodoPago;
+		this.empleado = empleado;
 		this.cliente = cliente;
 		this.productos = new ArrayList<>();
 	}
@@ -96,12 +97,12 @@ public class Factura {
 		this.importe = importe;
 	}
 	
-	public boolean getMetodo_de_pago() {
-		return metodo_de_pago;
+	public boolean getMetodoPago() {
+		return metodoPago;
 	}
 
-	public void setMetodo_de_pago(boolean metodo_de_pago) {
-		this.metodo_de_pago = metodo_de_pago;
+	public void setMetodoPago(boolean metodoPago) {
+		this.metodoPago = metodoPago;
 	}
 	public List<Producto> getProductos() {
 		return productos;
@@ -120,9 +121,17 @@ public class Factura {
 		this.cliente = cliente;
 	}
 
+	public Empleado getEmpleado() {
+		return empleado;
+	}
+
+	public void setEmpleado(Empleado empleado) {
+		this.empleado = empleado;
+	}
+
 	@Override
 	public String toString() {
-		return "Factura [id=" + id + ", fecha=" + fecha + ", importe=" + importe + ", metodo_de_pago=" + metodo_de_pago
+		return "Factura [id=" + id + ", fecha=" + fecha + ", importe=" + importe + ", metodo_de_pago=" + metodoPago
 				+ "]";
 	}
 	

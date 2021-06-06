@@ -46,30 +46,37 @@ public class Menu {
 
 
 	//DATOS DE PRUEBA
-	private final static String[] EMPLEADOS_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
-	private final static int[] EMPLEADOS_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
-	private final static String[] EMPLEADOS_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
-	private final static String[] EMPLEADOS_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
+	
+	//Usamos los siguientes datos para empleados y clientes
+	private final static String[] NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
+	private final static int[] TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
+	private final static String[] DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
+	private final static String[] DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
+	
+	//Datos para empleados
 	private final static String[] EMPLEADOS_FECHA = {"2020-09-24","1994-07-30","1990-08-02","1993-05-06","2000-03-24","1980-07-19"};
 	private final static int[] EMPLEADOS_SUELDO = {1800,2000,3000,1600,1500,2300};
-
-	private final static String[] CLIENTES_NOMBRES = {"Sara", "Carolina", "Alvaro", "Cristina", "Gabriela"};
-	private final static int[] CLIENTES_TELEFONOS = {607078090, 677655443, 667827162, 638427470, 691827381};
-	private final static String[] CLIENTES_DIRECCIONES = {"c/valle del sella","c/valle franco","c/Toledo","c/San Jose","c/Rio Duero"};
-	private final static String[] CLIENTES_DNI = {"54298850V", "48201146Q","4746214E","00496776Q","50193218U"};
 	
+	//Datos para factura
 	private final static String[] FACTURAS_FECHAS = {"2021-06-05","2017-04-22","2018-09-24","2020-12-23","2019-04-17","2021-05-23","2021-03-27","2020-01-06","2021-02-30","2019-11-25","2019-06-06"};
 	private final static Float[] FACTURAS_IMPORTES = {200.54f,30.0f,50.65f,10.50f,5.45f,17.20f,40.45f,1.50f,34.8f,25.5f,350.67f,550.3f};
 	private final static Boolean[] FACTURAS_METODO_PAGO = {false,true};
 	
+	//Datos para animales
 	private final static String[] ANIMALES_ESPECIE = {"Vaca","Cerdo","Gallina","Oveja"};
 	private final static String[] ANIMALES_PESO_ALTO = {"720Kg","700Kg","650Kg","499Kg","430Kg","500Kg"};
 	private final static String[] ANIMALES_PESO_MEDIO = {"100Kg","150Kg","200Kg","90Kg","120Kg"};
 	private final static String[] ANIMALES_PESO_BAJO = {"5.45Kg","4.5Kg","3.67Kg","2.9Kg","4.67Kg","1.89Kg","5kg"};
 	private final static String[] ANIMALES_FECHA = {"2018-09-20","2019-03-24","2019-07-08","2020-01-02","2016-09-03","2021-01-01","2015-12-12","2019-05-06"};
 	
+	//Datos para productos
 	private final static Integer[] PRODUCTOS_CANTIDAD = {1,2,3,20,50,100,300,11,30,70,4,6,40};
 
+	//Datos para plantaciones
+	private final static String [] PLANTACIONES_NOMBREPRODUCTOS = {"Maiz","Tomate","Uvas","Pimientos","Patatas","Lechugas","Fresas","Sandias","Zanahorias","Pepinos","Melones","Alcachofas"};
+	private final static String[] PLANTACIONES_ULTIMO_REGADO = {"2021-06-05","2021-06-06","2021-06-07","2021-06-08","2021-06-09","2021-06-04","2021-06-03","2021-06-02","2021-06-01"};
+	private final static Float[] PLANTACIONES_HECTAREAS = {100.50f,4.75f,8.9f,20.43f,80.97f,34.56f,51.67f};
+			
 	public static void main(String[] args)  throws JAXBException{
 
 		try {
@@ -636,12 +643,12 @@ public class Menu {
 
 
 	private static void generarEmpleados() {
-		for(int i = 0; i < EMPLEADOS_NOMBRES.length; i++) {
+		for(int i = 0; i < NOMBRES.length; i++) {
 			LocalDate fecha = LocalDate.parse(EMPLEADOS_FECHA[i], formatter);
-			Empleado empleado = new Empleado(EMPLEADOS_NOMBRES[i], EMPLEADOS_TELEFONOS[i], EMPLEADOS_DIRECCIONES[i], EMPLEADOS_DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
+			Empleado empleado = new Empleado(NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], DNI[i], Date.valueOf(fecha), EMPLEADOS_SUELDO[i]);
 			dbman.addEmpleado(empleado);
 		}
-		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " empleados.");
+		System.out.println("Se han generado " + NOMBRES.length + " empleados.");
 		mostrarEmpleados();
 
 	}
@@ -650,11 +657,11 @@ public class Menu {
 
 
 	private static void generarClientes() {
-		for(int i = 0; i < CLIENTES_NOMBRES.length; i++) {
-			Cliente cliente = new Cliente (CLIENTES_NOMBRES[i], CLIENTES_TELEFONOS[i], CLIENTES_DIRECCIONES[i], CLIENTES_DNI[i]);
+		for(int i = 0; i < NOMBRES.length; i++) {
+			Cliente cliente = new Cliente (NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], DNI[i]);
 			dbman.addCliente(cliente);
 		}
-		System.out.println("Se han generado " + CLIENTES_NOMBRES.length + " clientes.");
+		System.out.println("Se han generado " + NOMBRES.length + " clientes.");
 		mostrarClientes();
 
 	}
@@ -711,28 +718,38 @@ public class Menu {
 
 		//datos de CLIENTE
 
-		int randomName =(int) Math.floor(Math.random()*CLIENTES_NOMBRES.length);
-		System.out.println("randomName: "+ randomName);
-		int randomPhone = (int) Math.floor(Math.random()*CLIENTES_TELEFONOS.length);
-		System.out.println("randomPhone: "+ randomPhone);
-		int randomAddress = (int) Math.floor(Math.random()*CLIENTES_DIRECCIONES.length);
-		System.out.println("randomAddress: "+ randomAddress);
-		int randomDni = (int) Math.floor(Math.random()*CLIENTES_DNI.length);
-		System.out.println("randomDni: "+ randomDni);
+		int randomName =(int) Math.floor(Math.random()*NOMBRES.length);
+		int randomPhone = (int) Math.floor(Math.random()*TELEFONOS.length);
+		int randomAddress = (int) Math.floor(Math.random()*DIRECCIONES.length);
+		int randomDni = (int) Math.floor(Math.random()*DNI.length);
+
 		
-		Cliente cliente = new Cliente(CLIENTES_NOMBRES[randomName],CLIENTES_TELEFONOS[randomPhone],CLIENTES_DIRECCIONES[randomAddress],CLIENTES_DNI[randomDni]);
+		Cliente cliente = new Cliente(NOMBRES[randomName],TELEFONOS[randomPhone],DIRECCIONES[randomAddress],DNI[randomDni]);
 		dbman.addCliente(cliente);
 
-
+		//datos de EMPLEADO
+		
+		int randomNameEmp = (int) Math.floor(Math.random()*NOMBRES.length);
+		int randomPhoneEmp = (int) Math.floor(Math.random()*TELEFONOS.length);
+		int randomAddressEmp = (int) Math.floor(Math.random()*DIRECCIONES.length);
+		int randomDniEmp = (int) Math.floor(Math.random()*DNI.length);
+		int randomDateEmp =(int) Math.floor(Math.random()*EMPLEADOS_FECHA.length);
+		int randomSalary =(int) Math.floor(Math.random()*EMPLEADOS_SUELDO.length);
+		
+		Empleado empleado = new Empleado(NOMBRES[randomNameEmp],TELEFONOS[randomPhoneEmp],DIRECCIONES[randomAddressEmp],DNI[randomDniEmp],Date.valueOf(EMPLEADOS_FECHA[randomDateEmp]),EMPLEADOS_SUELDO[randomSalary]);
+		dbman.addEmpleado(empleado);
+		
 		//datos de FACTURA
+		
 		int randomDate =(int) Math.floor(Math.random()*FACTURAS_FECHAS.length);
 		int randomAmount = (int) Math.floor(Math.random()*FACTURAS_IMPORTES.length);
 		int randomPaymentMethod = (int) Math.floor(Math.random()*FACTURAS_METODO_PAGO.length);
 		
 		LocalDate fecha = LocalDate.parse(FACTURAS_FECHAS[randomDate], formatter);
-		Factura factura = new Factura(Date.valueOf(fecha),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod], cliente);
+		Factura factura = new Factura(Date.valueOf(fecha),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod],empleado, cliente);
 		dbman.addFacturaP(factura);
 	}
+	
 	private static void tablaProductos() {
 
 		int randomKind =(int) Math.floor(Math.random()*ANIMALES_ESPECIE.length);
@@ -751,7 +768,7 @@ public class Menu {
 			
 			String unidades = "Litros";
 			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
-			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);//no son producto de plantacion por eso pasamos un objeto null
 			dbman.addProductoP(producto);
 			
 		}else if(ANIMALES_ESPECIE[randomKind].equals("Gallina")){
@@ -763,7 +780,7 @@ public class Menu {
 			String nombreProducto = "Huevos";
 			String unidades = "Unidades";
 			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
-			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 			dbman.addProductoP(producto);
 			
 		}else {//Puede ser un Cerdo o una oveja que más o menos tienen el mismo peso
@@ -776,7 +793,7 @@ public class Menu {
 				String nombreProducto = "Jamon serrano";
 				String unidades = "Kilos";
 				float precio = (float)(15*PRODUCTOS_CANTIDAD[randomQuantity]);
-				Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+				Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 				dbman.addProductoP(producto);
 				
 			}else {//OVEJA
@@ -786,14 +803,14 @@ public class Menu {
 				if(PRODUCTOS_OVEJA[randomName].equals("Leche")) {
 					String unidades = "Litros";
 					float precio = (float)(4*PRODUCTOS_CANTIDAD[randomQuantity]);
-					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
 					
 				}else {//lana
 					
 					String unidades = "Kilos";
 					float precio = (float)(2.75*PRODUCTOS_CANTIDAD[randomQuantity]);
-					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
 				}
 				
@@ -805,17 +822,21 @@ public class Menu {
 	}
 	private static void tablaPlantaciones() {
 		//datos Plantacion
-		LocalDate ultimo_regado = LocalDate.parse("2021-06-05");
-		float hectareas = 2000.58f;
-		Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
+		
+		int randomDate =  (int) Math.floor(Math.random()*PLANTACIONES_ULTIMO_REGADO.length);
+		LocalDate ultimo_regado = LocalDate.parse(PLANTACIONES_ULTIMO_REGADO[randomDate]);
+		int randomHectares =  (int) Math.floor(Math.random()*PLANTACIONES_HECTAREAS.length);
+		Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado),PLANTACIONES_HECTAREAS[randomHectares]);
 		dbman.addPlantacion(plantacion);
+		
 		//datos Producto
-		String nombreProducto = "Maiz";
-		int cantidad = 1000;
+		String [] PLANTACIONES_NOMBREPRODUCTOS = {"Maiz","Tomate","Uvas","Pimientos","Patatas","Lechugas","Fresas","Sandias","Zanahorias","Pepinos","Melones","Alcachofas"};
+		int randomPlantacion = (int) Math.floor(Math.random()*PLANTACIONES_NOMBREPRODUCTOS.length);
+		int cantidad =  (int) Math.floor(Math.random()*1000);
 		String tipo = "Plantacion";
 		String unidades = "Kilos";
-		float precio = 4500.89f;
-		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio, null,plantacion);
+		float precio = (float) (0.8*cantidad);//Asumimos que todos los productos valen lo mismo al kilo
+		Producto producto = new Producto(PLANTACIONES_NOMBREPRODUCTOS[randomPlantacion],cantidad,tipo,unidades,precio, null,plantacion);//Como no es un producto animal pasamos un objeto null
 		dbman.addProductoConPlantacion(producto);
 
 		
@@ -852,6 +873,7 @@ public class Menu {
 		dbman.addFacturasProductos(facturas.get(facturaId),productos.get(productoId));
 
 	}
+	
 
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
@@ -875,27 +897,7 @@ public class Menu {
 		}
 		return bos != null ? bos.toByteArray() : null;
 	}
-	/*		//datos de Producto1
-		List<Producto> productos= new ArrayList<Producto>();
 
-		String nombreProducto = "Leche";
-		int cantidad = 4;
-		String tipo = "Animal";
-		String unidades = "Litros";
-		float precio = 2.4f;
-		Producto producto = new Producto(nombreProducto,cantidad,tipo,unidades,precio);
-		dbman.addProducto(producto);
-		productos.add(producto);
-		//datos de Producto2
-
-		String nombreProducto2 = "Leche";
-		int cantidad2 = 4;
-		String tipo2 = "Animal";
-		String unidades2 = "Litros";
-		float precio2 = 2.4f;
-		Producto producto2 = new Producto(nombreProducto2,cantidad2,tipo2,unidades2,precio2);
-		dbman.addProducto(producto2);
-		productos.add(producto2);*/
 }
 
 

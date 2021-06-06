@@ -62,4 +62,5 @@ public interface DBManager {
 	public List<Factura> searchFacturas();
 	public List<Producto> searchProductos();
 	public void addFacturasProductos(Factura factura,Producto producto);
+	public List<Empleado> searchEmpleadoByDni(String dniEmpleado);
 }
