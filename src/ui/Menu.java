@@ -12,6 +12,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Blob;
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -59,9 +60,6 @@ public class Menu {
 
 	//Datos para animales
 	private final static String[] ANIMALES_ESPECIE = {"Vaca","Cerdo","Gallina","Oveja"};
-
-	//Datos para productos
-	private final static Integer[] PRODUCTOS_CANTIDAD = {1,2,3,20,50,100,300,11,30,70,4,6,40};
 
 	public static void main(String[] args)  throws JAXBException{
 
@@ -234,7 +232,7 @@ public class Menu {
 				generarClientes();
 				break;
 			case 8:
-				Animal animal = new Animal("Vaca",Date.valueOf("2020-06-12"));//OJO TENEMOS QUE AÑADIR EL PESO
+				Animal animal = new Animal("Vaca","700Kg",Date.valueOf("2020-06-12"));//OJO TENEMOS QUE AÑADIR EL PESO
 				xmlman.marshallingAnimal(animal);
 				break;
 			case 9:
@@ -630,7 +628,8 @@ public class Menu {
 
 	private static void generarEmpleados() {
 		for(int i = 0; i < NOMBRES.length; i++) {
-			Empleado empleado = new Empleado(NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], generarDniAleatorio(), generarFechaAleatoria("Empleado"), randomFloat(500f,2000f));
+			float randomSueldo = randomFloat(500f,2000f);
+			Empleado empleado = new Empleado(NOMBRES[i], TELEFONOS[i], DIRECCIONES[i], generarDniAleatorio(), generarFechaAleatoria("Empleado"), Math.round(randomSueldo*100.0/100.0));
 			dbman.addEmpleado(empleado);
 		}
 		System.out.println("Se han generado " + NOMBRES.length + " empleados.");
@@ -718,7 +717,7 @@ public class Menu {
 		int randomPhoneEmp = (int) Math.floor(Math.random()*TELEFONOS.length);
 		int randomAddressEmp = (int) Math.floor(Math.random()*DIRECCIONES.length);
 
-		Empleado empleado = new Empleado(NOMBRES[randomNameEmp],TELEFONOS[randomPhoneEmp],DIRECCIONES[randomAddressEmp],generarDniAleatorio(),generarFechaAleatoria("Empleado"),randomFloat(500f,2000f));
+		Empleado empleado = new Empleado(NOMBRES[randomNameEmp],TELEFONOS[randomPhoneEmp],DIRECCIONES[randomAddressEmp],generarDniAleatorio(),generarFechaAleatoria("Empleado"),randomFloat(500f,2000f));//sueldo
 		dbman.addEmpleado(empleado);
 
 		//datos de FACTURA
@@ -734,7 +733,7 @@ public class Menu {
 	private static void tablaProductos() {
 
 		int randomKind =(int) Math.floor(Math.random()*ANIMALES_ESPECIE.length);
-		int randomQuantity =(int) Math.floor(Math.random()*PRODUCTOS_CANTIDAD.length);
+		int producto_cantidad = randomInt(1,100);
 		String tipo = "Animal";
 		//Distinguimos entre los animales de nuestra graja porque no tienen el mismo peso ni dan los mismos productos
 		if(ANIMALES_ESPECIE[randomKind].equals("Vaca")) {
@@ -743,10 +742,9 @@ public class Menu {
 			dbman.addAnimal(animal);
 			//datos de PRODUCTO
 			String nombreProducto = "Leche";
-
 			String unidades = "Litros";
-			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
-			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);//no son producto de plantacion por eso pasamos un objeto null
+			float precio = (float)(0.9*producto_cantidad);//el litro de leche son 0.9€
+			Producto producto = new Producto(nombreProducto,producto_cantidad,tipo,unidades,precio, animal,null);//no son producto de plantacion por eso pasamos un objeto null
 			dbman.addProductoP(producto);
 
 		}else if(ANIMALES_ESPECIE[randomKind].equals("Gallina")){
@@ -756,20 +754,22 @@ public class Menu {
 			//datos de PRODUCTO
 			String nombreProducto = "Huevos";
 			String unidades = "Unidades";
-			float precio = (float)(0.3*PRODUCTOS_CANTIDAD[randomQuantity]);//el litro de leche son 0.3€
-			Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
+			float precio = (float)(0.3*producto_cantidad);//el litro de leche son 0.3€
+			Producto producto = new Producto(nombreProducto,producto_cantidad,tipo,unidades,precio, animal,null);
 			dbman.addProductoP(producto);
 
 		}else {//Puede ser un Cerdo o una oveja que más o menos tienen el mismo peso
+			
 			Animal animal = new Animal(ANIMALES_ESPECIE[randomKind], (randomInt(200,100)+"Kg"), generarFechaAleatoria(tipo));
 			dbman.addAnimal(animal);
+			
 			if(ANIMALES_ESPECIE[randomKind].equals("Cerdo")) {
 
 				//datos de PRODUCTO
 				String nombreProducto = "Jamon serrano";
 				String unidades = "Kilos";
-				float precio = (float)(15*PRODUCTOS_CANTIDAD[randomQuantity]);
-				Producto producto = new Producto(nombreProducto,PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
+				float precio = (float)(15*producto_cantidad);
+				Producto producto = new Producto(nombreProducto,producto_cantidad,tipo,unidades,precio, animal,null);
 				dbman.addProductoP(producto);
 
 			}else {//OVEJA
@@ -778,15 +778,15 @@ public class Menu {
 
 				if(PRODUCTOS_OVEJA[randomName].equals("Leche")) {
 					String unidades = "Litros";
-					float precio = (float)(4*PRODUCTOS_CANTIDAD[randomQuantity]);
-					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
+					float precio = (float)(4*producto_cantidad);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],producto_cantidad,tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
 
 				}else {//lana
 
 					String unidades = "Kilos";
-					float precio = (float)(2.75*PRODUCTOS_CANTIDAD[randomQuantity]);
-					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],PRODUCTOS_CANTIDAD[randomQuantity],tipo,unidades,precio, animal,null);
+					float precio = (float)(2.75*producto_cantidad);
+					Producto producto = new Producto(PRODUCTOS_OVEJA[randomName],producto_cantidad,tipo,unidades,precio, animal,null);
 					dbman.addProductoP(producto);
 				}
 
@@ -891,7 +891,7 @@ public class Menu {
 			year = 2021;//La granja se abrió este año
 		}
 		
-		int month = randomInt(1,12);//genera número entre [1,13) es decir un numero entre el 1 y el 12
+		int month = randomInt(1,12);//genera número entre [1,13), es decir, un numero entre el 1 y el 12
 		int date = randomInt(0,30);
 		String monthText = (month <=9)? "0" + month : "" + month;//si (month <=9) es true devuelve lo que está antes de : y sino lo que está después 
 		String dateText = (date <=9)? "0" + date : "" + date;

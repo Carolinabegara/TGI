@@ -205,7 +205,7 @@ public class JDBCManager implements DBManager{
 			 * pero solo cogemos el primer elemento porque los dni son únicos para cada persona por lo que solo debería devolver un
 			 * único empleado.*/
 			
-			prep.setInt(4, (searchEmpleadoByDni(empleadoSinId.getDNI()).get(0)).getId());
+			prep.setInt(4, (searchEmpleadoByDni(empleadoSinId.getDNI()).get(0)).getId()); //get(0) devuelve el primer empleado
 			Cliente cliente = factura.getCliente();
 			prep.setInt(5, searchClienteByDNI(cliente.getDni()));//id del cliente
 
@@ -243,7 +243,7 @@ public class JDBCManager implements DBManager{
 	public void addProductoP(Producto producto) {
 
 		try {
-			PreparedStatement prep = c.prepareStatement( "INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades,AnimalId) VALUES (?,?,?,?,?,?);");
+			PreparedStatement prep = c.prepareStatement("INSERT INTO Productos (Nombre, Tipo, Cantidad, Precio,Unidades,AnimalId) VALUES (?,?,?,?,?,?);");
 			prep.setString(1, producto.getNombre());
 			prep.setString(2, producto.getTipo());
 			prep.setInt(3, producto.getCantidad());

@@ -51,9 +51,7 @@ public class Factura {
 		this.importe = importe;
 		this.metodoPago = metodoPago;
 	}
-	
-	
- 
+
 	public Factura(int id, Date fecha, Float importe, boolean metodoPago, Empleado empleado, Cliente cliente) {
 		super();
 		this.id = id;
