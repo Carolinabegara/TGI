@@ -45,7 +45,6 @@ public class Cliente implements Serializable{
 	
 	public Cliente(String nombre, int telefono, String direccion, String dni) {
 		super();
-		this.id = id;
 		this.nombre = nombre;
 		this.telefono = telefono;
 		this.direccion = direccion;

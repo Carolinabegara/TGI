@@ -170,26 +170,9 @@ public class JDBCManager implements DBManager{
 
 	}
 
+
 	@Override
 	public void addFactura(Factura factura) {
-
-		try {
-
-			PreparedStatement prep = c.prepareStatement(addFactura);
-			prep.setDate(1, factura.getFecha());
-			prep.setFloat(2, factura.getImporte());
-			prep.setBoolean(3, factura.getMetodoPago());
-
-			prep.executeUpdate();
-			prep.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}			
-
-	}
-	//prueba__________________________________________________
-	@Override
-	public void addFacturaP(Factura factura) {
 
 		try {
 
@@ -437,7 +420,36 @@ public class JDBCManager implements DBManager{
 		//Vamos a devolver el ArrayList
 		return empleados;
 	}
+	@Override
+	public List<Empleado> searchEmpleadosById(int empleadoId) {
+		List<Empleado> empleados= new ArrayList<Empleado>();
+		try {
+			Statement stmt = c.createStatement();
+			PreparedStatement prep = c.prepareStatement("SELECT * FROM Empleados WHERE Id = ?;");
+			prep.setInt(1, empleadoId);
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String DNI = rs.getString("DNI");
+				Date Fecha_Nac = rs.getDate("Fech_Nac");
+				Float sueldo = rs.getFloat("Sueldo");
+				byte[] foto = rs.getBytes("Foto");
+				Empleado empleado = new Empleado(id, nombre, telefono, direccion, DNI, Fecha_Nac, sueldo, foto);
+				empleados.add(empleado);
+				LOGGER.fine("Empleado encontrado: "+ empleado);
+			}
+			rs.close();
+			stmt.close();
 
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return empleados;
+	}
 
 	@Override
 	public List<Cliente> searchClientes() {
@@ -516,6 +528,33 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}
 		return facturas;
+	}
+	@Override
+	public List<Cliente> searchClientesById(int idCliente) {
+		List<Cliente> clientes= new ArrayList<Cliente>();
+		try {
+			Statement stmt = c.createStatement();
+			PreparedStatement prep = c.prepareStatement("SELECT * FROM Clientes WHERE Id = ?;");
+			prep.setInt(1, idCliente);
+			ResultSet rs = prep.executeQuery();
+			while(rs.next()){
+				int id = rs.getInt("Id");
+				String nombre = rs.getString("Nombre");
+				int telefono = rs.getInt("Telefono");
+				String direccion = rs.getString("Direccion");
+				String dni = rs.getString("DNI");
+				Cliente cliente = new Cliente(id,nombre,telefono, direccion,dni);
+				clientes.add(cliente);
+				LOGGER.fine("Cliente encontrado: "+ cliente);
+			}
+			rs.close();
+			stmt.close();
+
+		} catch (SQLException e) {
+			LOGGER.severe("Error al hacer un SELECT");
+			e.printStackTrace();
+		}
+		return clientes;
 	}
 
 	@Override

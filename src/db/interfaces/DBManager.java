@@ -47,7 +47,6 @@ public interface DBManager {
 	//public List<Cliente> searchClienteByDNI(String Dnicliente);
 	public int searchClienteByDNI(String Dnicliente);
 	public void addProducto(Producto producto);
-	public void addFacturaP(Factura factura);
 	public void addAnimal(Animal animal);
 	public int searchAnimal(Animal animal);
 	public void addProductoP(Producto producto);
@@ -63,4 +62,6 @@ public interface DBManager {
 	public List<Producto> searchProductos();
 	public void addFacturasProductos(Factura factura,Producto producto);
 	public List<Empleado> searchEmpleadoByDni(String dniEmpleado);
+	public List<Cliente> searchClientesById(int idCliente);
+	public List<Empleado> searchEmpleadosById(int empleadoId);
 }

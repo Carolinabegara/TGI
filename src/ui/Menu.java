@@ -381,11 +381,11 @@ public class Menu {
 	public static void xmlDTD() throws JAXBException{
 		int opcion_empleado=-1;
 		while(opcion_empleado!=0) {
-			System.out.println("Actualizar");
+			System.out.println("Validar XML");
 			System.out.println("Elije una opción:");
-			System.out.println("1. Validar XML de producto (DTD)");
-			System.out.println("2. Validar XML de animal (DTD)");
-			System.out.println("3. Validar XML de plantacion (DTD)");
+			System.out.println("1. Producto (DTD)");
+			System.out.println("2. Animal (DTD)");
+			System.out.println("3. Plantacion (DTD)");
 			System.out.println("0. Salir");
 			try {
 				opcion_empleado = Integer.parseInt(reader.readLine());
@@ -521,7 +521,7 @@ public class Menu {
 		System.out.println("Inserta:");
 		System.out.println("1. Plantacion");
 		System.out.println("2. Factura");
-		System.out.println("3. Insertar imagen");
+		System.out.println("3. Imagen");
 		System.out.println("0. Salir");
 		try {
 			opcionInsertar = Integer.parseInt(reader.readLine());
@@ -712,8 +712,6 @@ public class Menu {
 
 			System.out.println("Indique las hectáreas: ");
 			float hectareas = Float.parseFloat(reader.readLine());
-
-			//addProducto();
 			Plantacion plantacion = new Plantacion(Date.valueOf(ultimo_regado), hectareas);
 			dbman.addPlantacion(plantacion);
 		} catch (IOException e) {
@@ -737,7 +735,20 @@ public class Menu {
 			System.out.println("0. Tarjeta");
 			System.out.println("1. Efectivo");
 			boolean metodo_pago = Boolean.parseBoolean(reader.readLine());
-			Factura factura = new Factura (Date.valueOf(fecha),importe, metodo_pago);
+			
+			//RELACION CON LA TABLA CLIENTE
+			mostrarClientes();
+			System.out.println("Indique el Id del cliente que desea comprar el producto:");
+			int clienteId = Integer.parseInt(reader.readLine());
+			Cliente cliente = (dbman.searchClientesById(clienteId)).get(0);
+			//RELACION CON LA TABLA EMPLEADOS
+			
+			mostrarEmpleados();
+			System.out.println("Indique su Id:");
+			int empleadoId = Integer.parseInt(reader.readLine());
+			Empleado empleado = (dbman.searchEmpleadosById(empleadoId)).get(0);
+			
+			Factura factura = new Factura (Date.valueOf(fecha),importe, metodo_pago,empleado, cliente);
 			dbman.addFactura(factura);
 		} catch (NumberFormatException | IOException e) {
 
@@ -950,7 +961,7 @@ public class Menu {
 		int randomPaymentMethod = (int) Math.floor(Math.random()*FACTURAS_METODO_PAGO.length);
 
 		Factura factura = new Factura(generarFechaAleatoria("Factura"),FACTURAS_IMPORTES[randomAmount],FACTURAS_METODO_PAGO[randomPaymentMethod],empleado, cliente);
-		dbman.addFacturaP(factura);
+		dbman.addFactura(factura);
 	}
 
 	private static void tablaProductos() {
