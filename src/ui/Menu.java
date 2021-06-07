@@ -909,6 +909,15 @@ public class Menu {
 
 	//______________________________________Pruebas__________________________________________________________
 	/*Math.random() devuelve un dooble mayor que 0 y menor que 1*/
+	private static void insertarDatos() {
+		tablaFacturas();
+		tablaProductos();
+		tablaPlantaciones();
+		generarEmpleados();
+		tablaEmpleadoAnimal();
+		tablaEmpleadoPlantaciones();
+		tablaFacturasProductos();
+	}
 	private static void tablaFacturas() {
 
 		//datos de CLIENTE
@@ -1110,20 +1119,9 @@ public class Menu {
 		return Date.valueOf(fecha);
 	}
 	private static int randomInt(int max, int min) {
-		/*Random r1 = new Random(System.currentTimeMillis());
-		return (r1.nextInt()*(max - min)+min);*/
-		return (int) Math.random()*10+1;
-		//return (int) Math.random()*(max - min)+min;
+		return (int) (Math.random()*(max - min)+min);
 	}
-	private static void insertarDatos() {
-		tablaFacturas();
-		tablaProductos();
-		tablaPlantaciones();
-		generarEmpleados();
-		tablaEmpleadoAnimal();
-		tablaEmpleadoPlantaciones();
-		tablaFacturasProductos();
-	}
+
 	/*
 	 * Método extraído de https://www.sqlitetutorial.net/sqlite-java/jdbc-read-write-blob/
 	 */
