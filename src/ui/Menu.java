@@ -1097,7 +1097,7 @@ public class Menu {
 	}
 
 	private static float randomFloat (float max, float min) {
-		return (float) Math.random()*(max - min)+min;//devuelve un número entre el mínimo y el máximo
+		return (float) (Math.random()*(max - min)+min);//devuelve un número entre el mínimo y el máximo
 	}
 	private static Date generarFechaAleatoria(String tipoFecha) {//pasamos un string para saber si es un empleado o una fatura/plantacion
 		int year = -1;
