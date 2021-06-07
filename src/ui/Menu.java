@@ -152,6 +152,8 @@ public class Menu {
 				case 2:
 					mostrarClientes();
 					break;
+				case 0:
+					break;
 
 				}
 				break;
@@ -323,10 +325,12 @@ public class Menu {
 			case 1:
 				Animal animal = new Animal("Vaca","700Kg",Date.valueOf("2020-06-12"));
 				xmlman.marshallingAnimal(animal);
+				xmlman.marshallingAnimal_ParaUnmarshalling(animal);
 				break;
 			case 2:
 				Plantacion plantacion = new Plantacion(Date.valueOf("2020-06-12"),1003);
 				xmlman.marshallingPlantacion(plantacion);
+				xmlman.marshallingPlantacion_ParaUnmarshalling(plantacion);
 				break;
 			case 3:
 				Plantacion plantacion2 = new Plantacion(Date.valueOf("2021-05-20"),1003);

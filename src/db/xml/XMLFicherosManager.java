@@ -29,7 +29,37 @@ import pojos.Producto;
 
 
 public class XMLFicherosManager implements XMLManager{
+	/*si el XML empieza por <?xml version="1.0" encoding="UTF-8" standalone="yes"?> funciona el Unmarshalling pero no funciona el DTD
+	 * Pero si empieza por <!DOCTYPE plantacion SYSTEM \"Plantacion.dtd\"> el Unmarshalling no funciona pero el DTD si por eso generamos 2 
+	 * xml distintos para cada entidad*/
 
+	@Override
+	public void marshallingAnimal_ParaUnmarshalling(Animal animal) throws JAXBException {
+
+
+		// Creamos el JAXBContext
+		JAXBContext jaxbC= JAXBContext.newInstance(Animal.class);
+		// Creamos el JAXBMarshaller
+		Marshaller jaxbM= jaxbC.createMarshaller();
+		// Formateo bonito
+		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+		// Escribiendo en un fichero
+		File XMLfile= new File("./xml/AnimalMar.xml");
+		jaxbM.marshal(animal, XMLfile);
+	}
+	@Override
+	public void marshallingPlantacion_ParaUnmarshalling(Plantacion plantacion) throws JAXBException {
+
+		// Creamos el JAXBContext
+		JAXBContext jaxbC= JAXBContext.newInstance(Plantacion.class);
+		// Creamos el JAXBMarshaller
+		Marshaller jaxbM= jaxbC.createMarshaller();
+		// Formateo bonito
+		jaxbM.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT,Boolean.TRUE);
+		// Escribiendo en un fichero
+		File XMLfile= new File("./xml/PlantacionMar.xml");
+		jaxbM.marshal(plantacion, XMLfile);
+	}
 	@Override
 	public void marshallingAnimal(Animal animal) throws JAXBException {
 
@@ -91,7 +121,7 @@ public class XMLFicherosManager implements XMLManager{
 		// Creamos el JAXBMarshaller
 		Unmarshaller jaxbU = jaxbC.createUnmarshaller();
 		// Leyendo un fichero
-		File XMLfile = new File("./xml/Animal.xml");
+		File XMLfile = new File("./xml/AnimalMar.xml");
 		// Creando el objeto
 		Animal animal = (Animal) jaxbU.unmarshal(XMLfile);
 		// Escribiendo por pantalla el objeto
@@ -105,7 +135,7 @@ public class XMLFicherosManager implements XMLManager{
 		// Creamos el JAXBMarshaller
 		Unmarshaller jaxbU = jaxbC.createUnmarshaller();
 		// Leyendo un fichero
-		File XMLfile = new File("./xml/Plantacion.xml");
+		File XMLfile = new File("./xml/PlantacionMar.xml");
 		// Creando el objeto
 		Plantacion plantacion = (Plantacion) jaxbU.unmarshal(XMLfile);
 		// Escribiendo por pantalla el objeto

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<animal id="0">
+    <especie>Vaca</especie>
+    <peso>700Kg</peso>
+    <fecha_Nac>2020-06-12</fecha_Nac>
+</animal>
