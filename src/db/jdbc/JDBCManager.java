@@ -29,7 +29,6 @@ public class JDBCManager implements DBManager{
 	private final String searchUnEmpleado = "SELECT * FROM Empleados WHERE Nombre LIKE ?;";
 	private final String searchUnEmpleadoId = "SELECT * FROM Empleados WHERE Id = ?;";
 	private final String searchUnClienteDni = "SELECT * FROM Cliente WHERE DNI = ?;";
-	private final String actualizarNumeroTelefono = "UPDATE Empleados SET Telefono = ?;";
 	private final String insertarImagen = "UPDATE Empleados SET Foto = ? WHERE Id = ?;";
 
 
@@ -182,12 +181,12 @@ public class JDBCManager implements DBManager{
 			prep.setFloat(2, factura.getImporte());
 			prep.setBoolean(3, factura.getMetodoPago());
 			Empleado empleadoSinId = factura.getEmpleado();
-			
+
 			/*El empleado que tiene factura no tiene Id porque el id se asigna automáticamente en la base de datos 
 			 * por ello tenemos que buscar el Id en la base de datos. Además, el método searchEmpleadoByDni devuelve una lista de empleados
 			 * pero solo cogemos el primer elemento porque los dni son únicos para cada persona por lo que solo debería devolver un
 			 * único empleado.*/
-			
+
 			prep.setInt(4, (searchEmpleadoByDni(empleadoSinId.getDNI()).get(0)).getId()); //get(0) devuelve el primer empleado
 			Cliente cliente = factura.getCliente();
 			prep.setInt(5, searchClienteByDNI(cliente.getDni()));//id del cliente
@@ -326,7 +325,7 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}			
 
-		
+
 	}
 
 	@Override
@@ -353,7 +352,7 @@ public class JDBCManager implements DBManager{
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void addEmpleadoPlantacion(Empleado empleado,Plantacion plantacion) {
 		try {
@@ -488,7 +487,7 @@ public class JDBCManager implements DBManager{
 				int id = rs.getInt("Id");
 				float hectareas = rs.getFloat("Hectareas");
 				Date ultimo_regado = rs.getDate("HoraRegado");
-				
+
 				Plantacion plantacion = new Plantacion(id,ultimo_regado, hectareas);
 				plantaciones.add(plantacion);
 				LOGGER.fine("Plantacion encontrada: "+ plantacion);
@@ -502,8 +501,8 @@ public class JDBCManager implements DBManager{
 		}
 		return plantaciones;
 	}
-	
-	
+
+
 	@Override
 	public List<Factura> searchFacturas() {
 		List<Factura> facturas= new ArrayList<Factura>();
@@ -751,19 +750,22 @@ public class JDBCManager implements DBManager{
 	}
 
 	@Override
-	public boolean actualizarEmpleado(int idEmpleado) {
+	public boolean actualizarEmpleado(int idEmpleado, List<Empleado> empleados) {
 		boolean existe = false;
-		try {
-			PreparedStatement prep = c.prepareStatement(actualizarNumeroTelefono);
+		for(int i = 0; i<empleados.size(); i++) {
+			try {
+				PreparedStatement prep = c.prepareStatement("UPDATE Empleados SET Telefono = ? WHERE Id = ?;");
 
-			prep.setInt(1, idEmpleado);
-			int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
-			//y si hace cambios devuelve el numero de filas afectas
-			if(res > 0)
-				existe = true;
-			prep.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+				prep.setInt(1, idEmpleado);
+				prep.setInt(2, (empleados.get(i)).getId());
+				int res = prep.executeUpdate();//si no hace ningun cambio devuelve 0 
+				//y si hace cambios devuelve el numero de filas afectas
+				if(res > 0)
+					existe = true;
+				prep.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		return existe;
 	}

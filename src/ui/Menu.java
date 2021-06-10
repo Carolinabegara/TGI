@@ -831,7 +831,7 @@ public class Menu {
 				if(respuesta.equalsIgnoreCase("s")) {
 					System.out.println("Introduzca el nuevo número de teléfono: ");
 					int nuevoTelefono = Integer.parseInt(reader.readLine());
-					boolean existeEmpleado = dbman.actualizarEmpleado(nuevoTelefono);
+					boolean existeEmpleado = dbman.actualizarEmpleado(nuevoTelefono, empleados);
 					if(existeEmpleado) {
 						System.out.println("El empleado se ha actualizado con éxito");
 					} else {

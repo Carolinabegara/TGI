@@ -38,7 +38,7 @@ public interface DBManager {
 
 	List<Empleado> searchEmpleadoById(int idEmpleado);
 
-	public boolean actualizarEmpleado(int idEmpleado);
+	public boolean actualizarEmpleado(int idEmpleado, List<Empleado> empleados);
 
 	//public void addCliente(Empleado empleado);
 
